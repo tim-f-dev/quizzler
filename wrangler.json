@@ -2,6 +2,7 @@
   "name": "quizzler",
   "main": "src/index.js",
   "compatibility_date": "2026-10-13",
+  "upload_source_maps": true,
   "d1_databases": [
     {
       "binding": "daily",
