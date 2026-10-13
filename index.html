@@ -4,15 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quizzler</title>
+  <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-  <h1>Welcome to Quizzler!</h1>
-  <p>Choose a project:</p>
-
-  <nav>
-    <a href="/quiz/">Quiz</a>
-    <a href="/trivia/">Trivia</a>
-    <a href="/daily/">Daily</a>
-  </nav>
+  <main>
+    <img src="files/photos/quizzler%20wb.png" alt="Quizzler">
+    <nav aria-label="Main navigation" data-i18n-aria-label="mainNavigation">
+      <a href="daily/" data-i18n="daily">Daily</a>
+      <a href="trivia/" data-i18n="trivia">Trivia</a>
+      <a href="about/" data-i18n="about">About</a>
+      <a href="other/" data-i18n="other">Other</a>
+    </nav>
+  </main>
+  <footer aria-label="Legal and language options" data-i18n-aria-label="footerOptions">
+    <a href="legal-notice/" data-i18n="legal-notice">Legal Notice</a>
+    <a href="privacy-policy/" data-i18n="privacy-policy">Privacy Policy</a>
+    <button type="button" id="language-switcher" aria-label="Switch to German" data-i18n-aria-label="switchLanguage">Deutsch / English</button>
+  </footer>
+  <script src="scripts/language.js" defer></script>
 </body>
 </html>

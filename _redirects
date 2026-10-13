@@ -1,0 +1,7 @@
+# Legacy quiz URL and German legal page aliases.
+/quiz /trivia/ 301
+/quiz/ /trivia/ 301
+/impressum /legal-notice/ 301
+/impressum/ /legal-notice/ 301
+/datenschutz /privacy-policy/ 301
+/datenschutz/ /privacy-policy/ 301
