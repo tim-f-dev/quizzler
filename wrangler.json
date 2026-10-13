@@ -5,7 +5,8 @@
   "upload_source_maps": true,
   "d1_databases": [
     {
-      "binding": "daily",
+      "binding": "DB",
+      "database_name": "daily",
       "database_id": "511954d9-954a-4bb0-8df8-a14cae8b457a"
     }
   ],
