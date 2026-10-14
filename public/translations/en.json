@@ -57,6 +57,7 @@
   "daily.showAnswers": "Show answers",
   "daily.confirm": "Confirm",
   "daily.jokers": "Jokers",
-  "daily.telephone": "telephone",
-  "daily.audience": "audience"
+  "daily.telephone": "phone",
+  "daily.audience": "audience",
+  "daily.jokerError": "Could not use 50/50. Please try again."
 }

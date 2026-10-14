@@ -12,27 +12,34 @@ class Element {
   style = {};
 }
 
-function fixture({ failAt, count = 13, wrongAt = 9 } = {}) {
+function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0 } = {}) {
   const root = new Element("div");
+  const speech = new Element("p");
+  const window = { location: {} };
+  vm.runInNewContext(fs.readFileSync("public/scripts/telephone-joker.js", "utf8"), { window });
   const listeners = {};
   const calls = [];
   let failed = false;
   const questions = Array.from({ length: count }, (_, index) => ({
     id: index + 1, type: "multiple_choice", question_en: "Question " + index,
     question_de: "Frage " + index,
+    answer: {correct_index: index + 1 === wrongAt ? 2 : correctIndex},
     data: { options_en: ["A", "B", "C", "D"], options_de: ["AA", "BB", "CC", "DD"] },
   }));
   vm.runInNewContext(fs.readFileSync("public/scripts/daily.js", "utf8"), {
     document: {
-      getElementById: () => root, createElement: tag => new Element(tag),
+      getElementById: id => id === "telephone-speech" ? speech : root, createElement: tag => new Element(tag),
+      createElementNS: (namespace, tag) => new Element(tag),
       documentElement: { lang: "en" },
       addEventListener: (name, listener) => { listeners[name] = listener; },
     },
     crypto: { randomUUID: () => "test-uuid" },
-    window: { location: {} },
+    Math: Object.assign(Object.create(Math), {random: () => 0.999}),
+    window,
     console: { error() {} },
     fetch: async (url, options) => {
       if (url === "/api/daily") return { ok: true, json: async () => ({ date: "2026-10-14", questions }) };
+      assert.equal(url, "/api/answers");
       const body = JSON.parse(options.body);
       calls.push(body);
       if (body.question_id === failAt && !failed) {
@@ -40,13 +47,13 @@ function fixture({ failAt, count = 13, wrongAt = 9 } = {}) {
         return { ok: false, status: 500 };
       }
       return { ok: true, json: async () => ({
-        is_correct: body.question_id !== wrongAt, correct_answer: { correct_index: 2 },
+        saved: true,
       }) };
     },
   });
   function nodes(node = root) { return [node, ...node.children.flatMap(nodes)]; }
   return {
-    calls, root, listeners,
+    calls, root, listeners, speech,
     click(label) {
       const button = nodes().find(node => node.tag === "button" && node.textContent === label);
       assert(button, "Missing button " + label);
@@ -58,7 +65,51 @@ function fixture({ failAt, count = 13, wrongAt = 9 } = {}) {
 }
 const tick = () => new Promise(setImmediate);
 
-test("first wrong answer ends the quiz with collapsed answer accordions", async () => {
+test("telephone response weights, correct and wrong hints, bilingual formatting", () => {
+ const window = {};
+ vm.runInNewContext(fs.readFileSync("public/scripts/telephone-joker.js", "utf8"), { window });
+ const joker=window.TelephoneJoker;
+ assert.equal(joker.responses[0].weight,0.5);
+ assert.equal(joker.responses[1].weight,0.5);
+ const question={answer:{correct_index:2},data:{options_en:['A','B','C','D'],options_de:['AA','BB','CC','DD']}};
+ const correct=joker.choose(question,()=>0.1);
+ assert.equal(correct.answerIndex,2);
+ assert.equal(joker.format(correct,question,'en'),"I think it's C");
+ assert.equal(joker.format(correct,question,'de'),'Ich glaube, es ist CC');
+ for(const draw of [0.51,0.75,0.99]) {
+  const wrong=joker.choose(question,()=>draw);
+  assert.notEqual(wrong.answerIndex,2);
+  assert(joker.format(wrong,question,'en').startsWith("I don't think it's "));
+ }
+});
+
+test("telephone displays a single-use hint and hides it on the next question", async () => {
+ const quiz=fixture({wrongAt:0,correctIndex:2});await tick();
+ assert(quiz.speech.hidden);
+ quiz.click('phone');
+ assert(!quiz.speech.hidden);
+ assert(quiz.speech.textContent.length>0);
+ assert.throws(()=>quiz.click('phone'),/Disabled button/);
+ quiz.click('C');quiz.click('Confirm');await tick();
+ assert(quiz.speech.hidden);
+ assert.throws(()=>quiz.click('phone'),/Disabled button/);
+});
+
+test("50/50 disables two answers, clears eliminated selection and is used once", async () => {
+ const quiz=fixture({wrongAt:0,correctIndex:2}); await tick();
+ quiz.click('A'); quiz.click('50/50'); await tick();
+ assert.throws(()=>quiz.click('A'),/Disabled button/);
+ assert.throws(()=>quiz.click('B'),/Disabled button/);
+ assert.throws(()=>quiz.click('Confirm'),/Disabled button/);
+ assert.throws(()=>quiz.click('50/50'),/Disabled button/);
+ const choices=quiz.root.children.find(node=>node.className==='answer-choices');
+ assert.equal(choices.children.filter(node=>node.className==='eliminated-answer').length,2);
+ quiz.click('C'); quiz.click('Confirm'); await tick();
+ assert.throws(()=>quiz.click('50/50'),/Disabled button/);
+ quiz.click('A');
+});
+
+test("first wrong answer ends the quiz with one collapsed review accordion", async () => {
  const quiz=fixture(); await tick();
  for(let index=1;index<=9;index++) {
   assert(quiz.texts().includes('Question '+index));
@@ -67,14 +118,18 @@ test("first wrong answer ends the quiz with collapsed answer accordions", async 
  }
  assert.equal(quiz.calls.length,9);
  assert(quiz.texts().includes('8 correct'));
- const rows=quiz.root.children.filter(node=>node.tag==='section');
+ const accordions=quiz.root.children.filter(node=>node.tag==='details');
+ assert.equal(accordions.length,1);
+ const details=accordions[0];
+ assert(!details.open);
+ assert.equal(details.children[0].tag,'summary');
+ assert.equal(quiz.root.children.filter(node=>node.tag==='section').length,0);
+ const rows=details.children.filter(node=>node.tag==='section');
  assert.equal(rows.length,9);
  assert.equal(rows[8].style.color,'red');
  for(const row of rows) {
-  const details=row.children.find(node=>node.tag==='details');
-  assert(details); assert(!details.open);
-  assert.equal(details.children[0].tag,'summary');
-  assert(!row.children.some(node=>node.textContent.startsWith('Correct answer:')));
+  assert(!row.children.some(node=>node.tag==='details'));
+  assert(row.children.some(node=>node.textContent.startsWith('Correct answer:')));
  }
  quiz.listeners.languagechange({detail:{language:'de',labels:JSON.parse(fs.readFileSync('public/translations/de.json','utf8'))}});
  assert(quiz.texts().includes('8 richtig'));
@@ -82,14 +137,14 @@ test("first wrong answer ends the quiz with collapsed answer accordions", async 
 });
 
 test("all thirteen correct answers finish the quiz without showing a total",async()=>{
- const quiz=fixture({wrongAt:0}); await tick();
+ const quiz=fixture({wrongAt:0,correctIndex:2}); await tick();
  for(let index=0;index<13;index++){quiz.click('C');quiz.click('Confirm');await tick();}
  assert.equal(quiz.calls.length,13); assert(quiz.texts().includes('13 correct'));
  assert(quiz.calls.every(call=>call.quiz_date==='2026-10-14'));
 });
 
 test("selection requires confirmation and retry does not resubmit completed answers",async()=>{
- const quiz=fixture({failAt:2,wrongAt:0});await tick();
+ const quiz=fixture({failAt:2,wrongAt:0,correctIndex:2});await tick();
  assert(!quiz.texts().includes('Back'));
  assert.throws(()=>quiz.click('Confirm'),/Disabled button/);
  quiz.click('A');quiz.click('C');
@@ -98,7 +153,7 @@ test("selection requires confirmation and retry does not resubmit completed answ
  quiz.click('Confirm');await tick();
  assert.equal(quiz.calls[0].answer.selected_index,2);
  assert.equal(quiz.calls.length,1);
- quiz.click('B');quiz.click('Confirm');await tick();quiz.click('Retry');await tick();
+ quiz.click('C');quiz.click('Confirm');await tick();quiz.click('Retry');await tick();
  assert.equal(quiz.calls.filter(call=>call.question_id===1).length,1);
  assert.equal(quiz.calls.filter(call=>call.question_id===2).length,2);
  assert(quiz.texts().includes('Question 3'));

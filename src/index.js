@@ -42,7 +42,7 @@ export default {
         const { results } = await env.DB
           .prepare(`
             SELECT q.id, q.type, q.question_en, q.question_de,
-                   q.data, q.category, q.difficulty, d.position
+                   q.data, q.answer, q.category, q.difficulty, d.position
             FROM daily_questions d
             JOIN questions q ON q.id = d.question_id
             WHERE d.quiz_date = ?
@@ -53,7 +53,7 @@ export default {
 
         return Response.json({
           date,
-          questions: results.map(q => ({ ...q, data: JSON.parse(q.data) }))
+          questions: results.map(q => ({ ...q, data: JSON.parse(q.data), answer: JSON.parse(q.answer) }))
         });
       } catch (error) {
         console.error("Daily quiz error:", error);
@@ -64,7 +64,7 @@ export default {
       }
     }
 
-    if (url.pathname === "/api/submit" && request.method === "POST") {
+    if (url.pathname === "/api/answers" && request.method === "POST") {
       try {
         // 1. Read submission
         const body = await request.json().catch(() => null);
@@ -172,11 +172,10 @@ export default {
           )
           .run();
 
-        // 5. Return result
+        // 5. Acknowledge the saved answer
         return Response.json({
           question_id,
-          is_correct: isCorrect,
-          correct_answer: correctAnswer
+          saved: true
         });
 
       } catch (error) {

@@ -58,5 +58,6 @@
   "daily.confirm": "Bestätigen",
   "daily.jokers": "Joker",
   "daily.telephone": "Telefon",
-  "daily.audience": "Publikum"
+  "daily.audience": "Publikum",
+  "daily.jokerError": "50/50 konnte nicht verwendet werden. Bitte erneut versuchen."
 }
