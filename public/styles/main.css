@@ -89,7 +89,7 @@ p { line-height: 1.6; }
 address { font-style: normal; line-height: 1.6; }
 a { color: inherit; }
 
-.home-title {
+.home-title, .daily-title {
   font-family: "Fredoka", "Nunito Sans", sans-serif;
   font-size: clamp(40px, 11vw, 88px);
   font-weight: 600;
@@ -98,12 +98,13 @@ a { color: inherit; }
   white-space: nowrap;
   margin-bottom: 24px;
 }
-.home-title span:nth-child(6n + 1) { color: var(--color-red); }
-.home-title span:nth-child(6n + 2) { color: var(--color-green); }
-.home-title span:nth-child(6n + 3) { color: var(--color-gold); }
-.home-title span:nth-child(6n + 4) { color: var(--color-teal); }
-.home-title span:nth-child(6n + 5) { color: var(--color-blue); }
-.home-title span:nth-child(6n + 6) { color: var(--color-purple); }
+.daily-title { font-size: clamp(32px, 7vw, 64px); white-space: normal; }
+:is(.home-title, .daily-title) span:nth-child(6n + 1) { color: var(--color-red); }
+:is(.home-title, .daily-title) span:nth-child(6n + 2) { color: var(--color-green); }
+:is(.home-title, .daily-title) span:nth-child(6n + 3) { color: var(--color-gold); }
+:is(.home-title, .daily-title) span:nth-child(6n + 4) { color: var(--color-teal); }
+:is(.home-title, .daily-title) span:nth-child(6n + 5) { color: var(--color-blue); }
+:is(.home-title, .daily-title) span:nth-child(6n + 6) { color: var(--color-purple); }
 
 .home-logo {
   display: block;
@@ -121,15 +122,16 @@ main nav, #daily-quiz > div {
 button, main nav a {
   border: 1px solid #8b7d68;
   border-radius: 8px;
-  background: #faf6ee;
-  color: inherit;
+  background: var(--color-blue);
+  color: #fff;
   font: inherit;
+  text-shadow: 0 1px 3px #000, 0 0 2px #000;
   cursor: pointer;
 }
 
 main button, main nav a {
   padding: 20px 16px;
-  font-size: 20px;
+  font-size: 22px;
   text-decoration: none;
 }
 
@@ -140,13 +142,12 @@ button:hover, main nav a:hover, .site-footer a:hover { background: #e8ddcb; }
 main nav a, .answer-choices button {
   background: var(--button-color);
   border-color: var(--button-color);
-  color: var(--color-beige);
+  color: #fff;
 }
 main nav a:nth-child(1), .answer-choices button:nth-child(1) { --button-color: var(--color-red); }
 main nav a:nth-child(2), .answer-choices button:nth-child(2) { --button-color: var(--color-green); }
 main nav a:nth-child(3), .answer-choices button:nth-child(3) {
   --button-color: var(--color-gold);
-  color: #000;
 }
 main nav a:nth-child(4), .answer-choices button:nth-child(4) { --button-color: var(--color-teal); }
 main nav a:hover, .answer-choices button:hover {
@@ -163,7 +164,7 @@ button:disabled { opacity: .6; cursor: wait; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  width: min(100%, 264px);
+  width: min(100%, 330px);
   margin: 0 auto;
 }
 
@@ -175,8 +176,13 @@ button:disabled { opacity: .6; cursor: wait; }
   gap: 6px;
   aspect-ratio: 1;
   padding: 8px;
-  font-size: 12px;
+  font-size: 15px;
+  background: #f5aac6;
+  border-color: #f5aac6;
 }
+.joker-buttons button:hover { background: #f5aac6; }
+.joker-buttons button[aria-pressed="true"] { outline: 3px solid var(--color-purple); outline-offset: 3px; }
+.joker-buttons button:disabled { background: #aaa; border-color: #aaa; cursor: not-allowed; }
 
 .site-footer {
   display: flex;
@@ -190,9 +196,11 @@ button:disabled { opacity: .6; cursor: wait; }
   padding: 5px 8px;
   border: 1px solid #8b7d68;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 12px;
   text-decoration: none;
-  background: #faf6ee;
+  background: var(--color-blue);
+  color: #fff;
+  text-shadow: 0 1px 3px #000, 0 0 2px #000;
 }
 
 @media (max-width: 767px) {
@@ -203,7 +211,16 @@ button:disabled { opacity: .6; cursor: wait; }
   .site-header { padding: 12px 16px; }
   .site-header img { width: 96px; }
   main nav, #daily-quiz > div { gap: 10px; }
-  main button, main nav a { font-size: 17px; padding: 16px 10px; }
+  main button, main nav a { font-size: 19px; padding: 16px 10px; }
+  .joker-buttons button { font-size: 14px; padding: 8px; }
+}
+
+@media (min-width: 768px) {
+  main { width: min(90%, 820px); }
+  main button, main nav a { padding: 28px 24px; font-size: 26px; }
+  #daily-quiz h2 { font-size: 30px; }
+  #daily-quiz > .joker-buttons { width: 390px; }
+  .joker-buttons button { font-size: 18px; padding: 12px; }
 }
 
 .answer-choices button[aria-pressed="true"] {
@@ -215,7 +232,7 @@ button:disabled { opacity: .6; cursor: wait; }
 .answer-choices button.eliminated-answer {
   background: #d1d1d1;
   border-color: #aaa;
-  color: #666;
+  color: #fff;
   opacity: 1;
   cursor: not-allowed;
   filter: none;

@@ -7,7 +7,7 @@ class Element {
   constructor(tag) { this.tag = tag; this.children = []; this.textContent = ""; }
   append(child) { this.children.push(child); }
   replaceChildren() { this.children = []; }
-  setAttribute() {}
+  setAttribute(name, value) { this[name] = value; }
   addEventListener(type, listener) { this[type] = listener; }
   style = {};
 }
@@ -66,6 +66,36 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
 }
 const tick = () => new Promise(setImmediate);
 
+test("joker first press selects and second press activates", async () => {
+ const quiz=fixture({correctIndex:2,wrongAt:0});await tick();
+ quiz.click('50/50');
+ let jokers=quiz.root.children.find(node=>node.className==='joker-buttons');
+ assert.equal(jokers.children[0]['aria-pressed'],'true');
+ let choices=quiz.root.children.find(node=>node.className==='answer-choices');
+ assert.equal(choices.children.filter(node=>node.disabled).length,0);
+ quiz.click('phone');
+ assert(quiz.speech.hidden);
+ quiz.click('phone');
+ assert(!quiz.speech.hidden);
+ quiz.click('50/50');quiz.click('50/50');
+ choices=quiz.root.children.find(node=>node.className==='answer-choices');
+ assert.equal(choices.children.filter(node=>node.disabled).length,2);
+});
+
+test("Copy Result copies text without opening native sharing", async () => {
+ let copied;
+ const quiz=fixture({wrongAt:1,navigator:{
+  share:async()=>assert.fail('Copy must not open sharing'),
+  clipboard:{writeText:async value=>{copied=value;}}
+ }});
+ await tick();quiz.click('A');quiz.click('Confirm');await tick();
+ const actions=quiz.root.children.find(node=>node.className==='result-actions');
+ assert.deepEqual(actions.children.map(node=>node.textContent),['Share','Copy Result']);
+ quiz.click('Copy Result');await tick();
+ assert(copied.includes('🏆 Level 0/13: 🧱 Brick'));
+ assert(quiz.texts().includes('Copied!'));
+});
+
 test("share copies the actual result in the requested format", async () => {
  let copied;
  const quiz=fixture({wrongAt:10,navigator:{clipboard:{writeText:async value=>{copied=value;}}}});
@@ -79,7 +109,7 @@ test("share copies the actual result in the requested format", async () => {
 test("native share includes actual remaining jokers", async () => {
  let shared;
  const quiz=fixture({wrongAt:1,navigator:{share:async value=>{shared=value.text;}}});
- await tick();quiz.click('50/50');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ await tick();quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
  quiz.click('Share');await tick();
  assert(shared.includes('🏆 Level 0/13: 🧱 Brick'));
  assert(shared.includes('🃏 Jokers left: 1'));
@@ -106,7 +136,7 @@ test("telephone response weights, correct and wrong hints, bilingual formatting"
 test("telephone displays a single-use hint and hides it on the next question", async () => {
  const quiz=fixture({wrongAt:0,correctIndex:2});await tick();
  assert(quiz.speech.hidden);
- quiz.click('phone');
+ quiz.click('phone');quiz.click('phone');
  assert(!quiz.speech.hidden);
  assert(quiz.speech.textContent.length>0);
  assert.throws(()=>quiz.click('phone'),/Disabled button/);
@@ -117,7 +147,7 @@ test("telephone displays a single-use hint and hides it on the next question", a
 
 test("50/50 disables two answers, clears eliminated selection and is used once", async () => {
  const quiz=fixture({wrongAt:0,correctIndex:2}); await tick();
- quiz.click('A'); quiz.click('50/50'); await tick();
+ quiz.click('A'); quiz.click('50/50');quiz.click('50/50'); await tick();
  assert.throws(()=>quiz.click('A'),/Disabled button/);
  assert.throws(()=>quiz.click('B'),/Disabled button/);
  assert.throws(()=>quiz.click('Confirm'),/Disabled button/);
@@ -189,7 +219,7 @@ test("incomplete daily quiz is unavailable without revealing the total",async()=
 
 test("first question targets level one and first failure earns level zero", async () => {
  const quiz=fixture({wrongAt:1});await tick();
- assert(quiz.texts().includes('Level: 🦠 Single Brain Cell'));
+ assert(quiz.texts().includes('🦠 Single Brain Cell'));
  quiz.click('A');quiz.click('Confirm');await tick();
  assert(quiz.texts().includes('Level reached: 🧱 Brick'));
  assert(quiz.texts().includes('0 correct'));
@@ -198,6 +228,6 @@ test("first question targets level one and first failure earns level zero", asyn
 
 test("results count used 50/50 and phone jokers", async () => {
  const quiz=fixture({wrongAt:1});await tick();
- quiz.click('50/50');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
  assert(quiz.texts().includes('Jokers left: 1'));
 });

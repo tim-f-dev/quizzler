@@ -33,7 +33,7 @@
       });
       document.documentElement.lang = nextLanguage;
       if (document.body.dataset.page) {
-        document.title = labels[document.body.dataset.page] + " | Quizzler";
+        document.title = document.body.dataset.title || (labels[document.body.dataset.page] + " | Quizzler");
       }
       language = nextLanguage;
       document.dispatchEvent(new CustomEvent("languagechange", {

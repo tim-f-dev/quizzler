@@ -19,6 +19,7 @@
     "daily.levelReached": "Level reached",
     "daily.jokersLeft": "Jokers left",
     "daily.share": "Share",
+    "daily.copyResult": "Copy Result",
     "daily.copied": "Copied!",
     "daily.copyManually": "Copy this text to share your result:",
     "daily.correct": "correct",
@@ -37,6 +38,7 @@
   let state = "loading";
   let fiftyUsed = false;
   let telephoneUsed = false;
+  let selectedJoker = null;
   let telephoneHint;
   let telephonePosition;
   const eliminated = [];
@@ -108,6 +110,8 @@
         "Think you can beat me?",
         "https://quizzler.cc/daily",
       ].join("\n");
+      const actions = element("div");
+      actions.className = "result-actions";
       const share = button(text("share"), async () => {
         share.disabled = true;
         try {
@@ -119,6 +123,21 @@
               if (error.name === "AbortError") return;
             }
           }
+          await copyResult();
+        } finally {
+          share.disabled = false;
+        }
+      }, actions);
+      const copy = button(text("copyResult"), async () => {
+        copy.disabled = true;
+        try { await copyResult(); }
+        finally { copy.disabled = false; }
+      }, actions);
+      const shareStatus = element("p");
+      shareStatus.setAttribute("role", "status");
+      let manualCopy;
+      async function copyResult() {
+        try {
           if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
           await navigator.clipboard.writeText(shareText);
           shareStatus.textContent = text("copied");
@@ -128,17 +147,12 @@
             manualCopy = element("textarea", shareText);
             manualCopy.readOnly = true;
             manualCopy.rows = 5;
-            manualCopy.setAttribute("aria-label", text("share"));
+            manualCopy.setAttribute("aria-label", text("copyResult"));
           }
           manualCopy.focus();
           manualCopy.select();
-        } finally {
-          share.disabled = false;
         }
-      });
-      const shareStatus = element("p");
-      shareStatus.setAttribute("role", "status");
-      let manualCopy;
+      }
       const accordion = element("details");
       element("summary", text("showAnswers"), accordion);
       questions.slice(0, results.length).forEach((question, index) => {
@@ -156,7 +170,7 @@
 
     const question = questions[position];
     element("p", text("question") + " " + (position + 1));
-    element("p", text("level") + ": " + levels[position + 1]);
+    element("h2", levels[position + 1]);
     element("h2", questionText(question));
     const choices = element("div");
     choices.className = "answer-choices";
@@ -195,20 +209,24 @@
         svg.append(shape);
       }
       joker.append(svg);
-      if (label === "50/50") {
-        joker.disabled = fiftyUsed;
-        joker.addEventListener("click", useFiftyFifty);
-      }
-      if (label === text("telephone")) {
-        joker.disabled = telephoneUsed;
-        joker.addEventListener("click", () => {
-          if (state !== "quiz" || telephoneUsed) return;
+      joker.disabled = iconIndex === 0 ? fiftyUsed : iconIndex === 1 ? telephoneUsed : false;
+      joker.setAttribute("aria-pressed", String(selectedJoker === iconIndex));
+      joker.addEventListener("click", () => {
+        if (state !== "quiz" || joker.disabled) return;
+        if (selectedJoker !== iconIndex) {
+          selectedJoker = iconIndex;
+          render();
+          return;
+        }
+        selectedJoker = null;
+        if (iconIndex === 0) useFiftyFifty();
+        else if (iconIndex === 1) {
           telephoneHint = window.TelephoneJoker.choose(questions[position]);
           telephonePosition = position;
           telephoneUsed = true;
           render();
-        });
-      }
+        } else render(); // Audience functionality will be added later.
+      });
     }
   }
 
@@ -249,6 +267,7 @@
         results.length = 0;
         eliminated.length = 0;
         fiftyUsed = false;
+        selectedJoker = null;
         telephoneUsed = false;
         telephoneHint = undefined;
         state = "quiz";
@@ -262,6 +281,7 @@
 
   async function submitCurrent() {
     if (state === "submitting" || !Number.isInteger(answers[position])) return;
+    selectedJoker = null;
     state = "submitting";
     render();
     try {

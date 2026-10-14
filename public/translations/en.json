@@ -65,5 +65,6 @@
   "daily.jokersLeft": "Jokers left",
   "daily.share": "Share",
   "daily.copied": "Copied!",
-  "daily.copyManually": "Copy this text to share your result:"
+  "daily.copyManually": "Copy this text to share your result:",
+  "daily.copyResult": "Copy Result"
 }
