@@ -39,5 +39,19 @@
   "privacy.authorityLink": "Data protection authority for Rhineland-Palatinate",
   "privacy.updatesTitle": "Changes to this policy",
   "privacy.updatesText": "This policy will be updated when the site's functions or data processing change.",
-  "privacy.updated": "Last updated: 13 October 2026"
+  "privacy.updated": "Last updated: 13 October 2026",
+  "daily.loading": "Loading daily quiz...",
+  "daily.unavailable": "The daily quiz needs 10 multiple-choice questions with four answers each.",
+  "daily.loadError": "Could not load the daily quiz.",
+  "daily.submitError": "Could not submit all answers. Please retry.",
+  "daily.retry": "Retry",
+  "daily.back": "Back",
+  "daily.next": "Next",
+  "daily.finish": "Show results",
+  "daily.submitting": "Submitting answers...",
+  "daily.question": "Question",
+  "daily.correct": "correct",
+  "daily.wrong": "Wrong",
+  "daily.correctAnswer": "Correct answer",
+  "daily.yourAnswer": "Your answer"
 }

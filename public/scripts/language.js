@@ -36,6 +36,9 @@
         document.title = labels[document.body.dataset.page] + " | Quizzler";
       }
       language = nextLanguage;
+      document.dispatchEvent(new CustomEvent("languagechange", {
+        detail: { language, labels },
+      }));
       button.textContent = language === "en" ? "Deutsch / English ✓" : "Deutsch ✓ / English";
       try {
         localStorage.setItem("quizzler-language", language);
