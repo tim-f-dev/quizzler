@@ -58,7 +58,6 @@
   "daily.confirm": "Bestätigen",
   "daily.jokers": "Joker",
   "daily.telephone": "Telefon",
-  "daily.audience": "Publikum",
   "daily.jokerError": "50/50 konnte nicht verwendet werden. Bitte erneut versuchen.",
   "daily.level": "Level",
   "daily.levelReached": "Erreichtes Level",
@@ -66,5 +65,6 @@
   "daily.share": "Teilen",
   "daily.copied": "Kopiert!",
   "daily.copyManually": "Kopiere diesen Text, um dein Ergebnis zu teilen:",
-  "daily.copyResult": "Ergebnis kopieren"
+  "daily.copyResult": "Ergebnis kopieren",
+  "daily.chat": "chat"
 }

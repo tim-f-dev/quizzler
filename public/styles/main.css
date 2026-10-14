@@ -237,3 +237,8 @@ button:disabled { opacity: .6; cursor: wait; }
   cursor: not-allowed;
   filter: none;
 }
+
+.answer-choices button.chat-answer { display: flex; align-items: stretch; padding: 0; }
+.chat-answer .answer-label { flex: 1; min-width: 0; padding: 20px 12px; align-self: center; }
+.chat-answer .answer-percentage { display: flex; align-items: center; justify-content: center; width: 30%; flex-shrink: 0; border-left: 1px solid currentColor; padding: 12px 6px; }
+@media (min-width: 768px) { .chat-answer .answer-label { padding: 28px 20px; } }

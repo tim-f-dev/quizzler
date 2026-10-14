@@ -17,6 +17,7 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
   const speech = new Element("p");
   const window = { location: {} };
   vm.runInNewContext(fs.readFileSync("public/scripts/telephone-joker.js", "utf8"), { window });
+  vm.runInNewContext(fs.readFileSync("public/scripts/chat-joker.js", "utf8"), { window });
   const listeners = {};
   const calls = [];
   let failed = false;
@@ -56,7 +57,8 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
   return {
     calls, root, listeners, speech,
     click(label) {
-      const button = nodes().find(node => node.tag === "button" && node.textContent === label);
+      const button = nodes().find(node => node.tag === "button" &&
+        (node.textContent === label || node.children[0]?.textContent === label));
       assert(button, "Missing button " + label);
       assert(!button.disabled, "Disabled button " + label);
       button.click();
@@ -65,6 +67,34 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
   };
 }
 const tick = () => new Promise(setImmediate);
+
+test("chat distributions satisfy every range, cap and total", () => {
+ const window={};vm.runInNewContext(fs.readFileSync('public/scripts/chat-joker.js','utf8'),{window});
+ for(let number=1;number<=13;number++) for(let correct=0;correct<4;correct++) {
+  for(let trial=0;trial<100;trial++) {
+   const values=window.ChatJoker.percentages(number,correct);
+   assert.equal(values.reduce((sum,value)=>sum+value,0),100);
+   assert(values.every(Number.isInteger));
+   assert(values[correct]>=(number<=5?50:30));
+   assert(values[correct]<=(number<=9?100:60));
+   values.forEach((value,index)=>{if(index!==correct) assert(value>=0 && value<=(number<=5?100:number<=9?40:50));});
+  }
+ }
+});
+
+test("chat uses two presses and splits answers with persistent percentages", async () => {
+ const quiz=fixture({wrongAt:1});await tick();
+ quiz.click('chat');
+ let choices=quiz.root.children.find(node=>node.className==='answer-choices');
+ assert(!choices.children[0].className?.includes('chat-answer'));
+ quiz.click('chat');
+ choices=quiz.root.children.find(node=>node.className==='answer-choices');
+ const values=choices.children.map(node=>parseInt(node.children[1].textContent));
+ assert.equal(values.reduce((sum,value)=>sum+value,0),100);
+ assert.throws(()=>quiz.click('chat'),/Disabled button/);
+ quiz.click('A');quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('Jokers left: 2'));
+});
 
 test("joker first press selects and second press activates", async () => {
  const quiz=fixture({correctIndex:2,wrongAt:0});await tick();
@@ -153,7 +183,7 @@ test("50/50 disables two answers, clears eliminated selection and is used once",
  assert.throws(()=>quiz.click('Confirm'),/Disabled button/);
  assert.throws(()=>quiz.click('50/50'),/Disabled button/);
  const choices=quiz.root.children.find(node=>node.className==='answer-choices');
- assert.equal(choices.children.filter(node=>node.className==='eliminated-answer').length,2);
+ assert.equal(choices.children.filter(node=>node.className?.includes('eliminated-answer')).length,2);
  quiz.click('C'); quiz.click('Confirm'); await tick();
  assert.throws(()=>quiz.click('50/50'),/Disabled button/);
  quiz.click('A');

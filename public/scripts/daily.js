@@ -10,7 +10,7 @@
     "daily.confirm": "Confirm",
     "daily.jokers": "Jokers",
     "daily.telephone": "phone",
-    "daily.audience": "audience",
+    "daily.chat": "chat",
     "daily.next": "Next",
     "daily.finish": "Show results",
     "daily.submitting": "Submitting answers...",
@@ -38,6 +38,8 @@
   let state = "loading";
   let fiftyUsed = false;
   let telephoneUsed = false;
+  let chatUsed = false;
+  const chatPercentages = [];
   let selectedJoker = null;
   let telephoneHint;
   let telephonePosition;
@@ -101,7 +103,7 @@
       const score = results.filter(result => result.is_correct).length;
       element("h2", score + " " + text("correct"));
       element("p", text("levelReached") + ": " + levels[score]);
-      const jokersLeft = 3 - Number(fiftyUsed) - Number(telephoneUsed);
+      const jokersLeft = 3 - Number(fiftyUsed) - Number(telephoneUsed) - Number(chatUsed);
       element("p", text("jokersLeft") + ": " + jokersLeft);
       const shareText = [
         "🧢Quizzler Daily",
@@ -181,8 +183,16 @@
         render();
       }, choices);
       choice.setAttribute("aria-pressed", String(answers[position] === index));
+      if (chatPercentages[position]) {
+        choice.textContent = "";
+        const label = element("span", option, choice);
+        label.className = "answer-label";
+        const percentage = element("span", chatPercentages[position][index] + "%", choice);
+        percentage.className = "answer-percentage";
+        choice.className = "chat-answer";
+      }
       choice.disabled = Boolean(eliminated[position]?.includes(index));
-      if (eliminated[position]?.includes(index)) choice.className = "eliminated-answer";
+      if (eliminated[position]?.includes(index)) choice.className += " eliminated-answer";
     });
     const confirm = button(text("confirm"), submitCurrent);
     confirm.disabled = !Number.isInteger(answers[position]);
@@ -194,7 +204,7 @@
       [["path", { d: "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" }]],
       [["path", { d: "M3 3v16a2 2 0 0 0 2 2h16" }], ["path", { d: "M18 17V9" }], ["path", { d: "M13 17V5" }], ["path", { d: "M8 17v-3" }]],
     ];
-    for (const [iconIndex, label] of ["50/50", text("telephone"), text("audience")].entries()) {
+    for (const [iconIndex, label] of ["50/50", text("telephone"), text("chat")].entries()) {
       const joker = element("button", label, jokers);
       joker.type = "button";
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -209,7 +219,7 @@
         svg.append(shape);
       }
       joker.append(svg);
-      joker.disabled = iconIndex === 0 ? fiftyUsed : iconIndex === 1 ? telephoneUsed : false;
+      joker.disabled = iconIndex === 0 ? fiftyUsed : iconIndex === 1 ? telephoneUsed : chatUsed;
       joker.setAttribute("aria-pressed", String(selectedJoker === iconIndex));
       joker.addEventListener("click", () => {
         if (state !== "quiz" || joker.disabled) return;
@@ -225,7 +235,11 @@
           telephonePosition = position;
           telephoneUsed = true;
           render();
-        } else render(); // Audience functionality will be added later.
+        } else {
+          chatPercentages[position] = window.ChatJoker.percentages(position + 1, questions[position].answer.correct_index);
+          chatUsed = true;
+          render();
+        }
       });
     }
   }
@@ -269,6 +283,8 @@
         fiftyUsed = false;
         selectedJoker = null;
         telephoneUsed = false;
+        chatUsed = false;
+        chatPercentages.length = 0;
         telephoneHint = undefined;
         state = "quiz";
       }
