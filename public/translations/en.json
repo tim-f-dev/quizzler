@@ -41,9 +41,9 @@
   "privacy.updatesText": "This policy will be updated when the site's functions or data processing change.",
   "privacy.updated": "Last updated: 13 October 2026",
   "daily.loading": "Loading daily quiz...",
-  "daily.unavailable": "The daily quiz needs 10 multiple-choice questions with four answers each.",
+  "daily.unavailable": "The daily quiz is not available yet.",
   "daily.loadError": "Could not load the daily quiz.",
-  "daily.submitError": "Could not submit all answers. Please retry.",
+  "daily.submitError": "Could not submit your answer. Please retry.",
   "daily.retry": "Retry",
   "daily.back": "Back",
   "daily.next": "Next",
@@ -53,5 +53,10 @@
   "daily.correct": "correct",
   "daily.wrong": "Wrong",
   "daily.correctAnswer": "Correct answer",
-  "daily.yourAnswer": "Your answer"
+  "daily.yourAnswer": "Your answer",
+  "daily.showAnswers": "Show answers",
+  "daily.confirm": "Confirm",
+  "daily.jokers": "Jokers",
+  "daily.telephone": "telephone",
+  "daily.audience": "audience"
 }

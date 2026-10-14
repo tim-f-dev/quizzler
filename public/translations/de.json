@@ -41,9 +41,9 @@
   "privacy.updatesText": "Diese Erklärung wird aktualisiert, wenn sich die Funktionen der Website oder die Datenverarbeitung ändern.",
   "privacy.updated": "Stand: 13. Oktober 2026",
   "daily.loading": "Tagesquiz wird geladen...",
-  "daily.unavailable": "Das Tagesquiz benötigt 10 Multiple-Choice-Fragen mit jeweils vier Antworten.",
+  "daily.unavailable": "Das Tagesquiz ist noch nicht verfügbar.",
   "daily.loadError": "Das Tagesquiz konnte nicht geladen werden.",
-  "daily.submitError": "Nicht alle Antworten konnten gesendet werden. Bitte erneut versuchen.",
+  "daily.submitError": "Deine Antwort konnte nicht gesendet werden. Bitte erneut versuchen.",
   "daily.retry": "Erneut versuchen",
   "daily.back": "Zurück",
   "daily.next": "Weiter",
@@ -53,5 +53,10 @@
   "daily.correct": "richtig",
   "daily.wrong": "Falsch",
   "daily.correctAnswer": "Richtige Antwort",
-  "daily.yourAnswer": "Deine Antwort"
+  "daily.yourAnswer": "Deine Antwort",
+  "daily.showAnswers": "Antworten anzeigen",
+  "daily.confirm": "Bestätigen",
+  "daily.jokers": "Joker",
+  "daily.telephone": "Telefon",
+  "daily.audience": "Publikum"
 }

@@ -3,17 +3,21 @@
   const userId = "player_" + crypto.randomUUID();
   const fallback = {
     "daily.loading": "Loading daily quiz...",
-    "daily.unavailable": "The daily quiz needs 10 multiple-choice questions with four answers each.",
+    "daily.unavailable": "The daily quiz is not available yet.",
     "daily.loadError": "Could not load the daily quiz.",
-    "daily.submitError": "Could not submit all answers. Please retry.",
+    "daily.submitError": "Could not submit your answer. Please retry.",
     "daily.retry": "Retry",
-    "daily.back": "Back",
+    "daily.confirm": "Confirm",
+    "daily.jokers": "Jokers",
+    "daily.telephone": "telephone",
+    "daily.audience": "audience",
     "daily.next": "Next",
     "daily.finish": "Show results",
     "daily.submitting": "Submitting answers...",
     "daily.question": "Question",
     "daily.correct": "correct",
     "daily.wrong": "Wrong",
+    "daily.showAnswers": "Show answers",
     "daily.correctAnswer": "Correct answer",
     "daily.yourAnswer": "Your answer",
   };
@@ -54,42 +58,48 @@
     }
     if (state === "loadError" || state === "unavailable" || state === "submitError") {
       element("p", text(state));
-      button(text("retry"), state === "submitError" ? submitAll : load);
+      button(text("retry"), state === "submitError" ? submitCurrent : load);
       return;
     }
     if (state === "results") {
       const score = results.filter(result => result.is_correct).length;
-      element("h2", score + "/" + questions.length + " " + text("correct"));
-      questions.forEach((question, index) => {
+      element("h2", score + " " + text("correct"));
+      questions.slice(0, results.length).forEach((question, index) => {
         const result = results[index];
         const row = element("section");
         row.style.color = result.is_correct ? "green" : "red";
         element("h3", (index + 1) + ". " + questionText(question), row);
         element("p", result.is_correct ? text("correct") : text("wrong"), row);
-        element("p", text("yourAnswer") + ": " + options(question)[answers[index]], row);
+        const accordion = element("details", undefined, row);
+        element("summary", text("showAnswers"), accordion);
+        element("p", text("yourAnswer") + ": " + options(question)[answers[index]], accordion);
         element("p", text("correctAnswer") + ": " +
-          options(question)[result.correct_answer.correct_index], row);
+          options(question)[result.correct_answer.correct_index], accordion);
       });
       return;
     }
 
     const question = questions[position];
-    element("p", text("question") + " " + (position + 1) + "/" + questions.length);
+    element("p", text("question") + " " + (position + 1));
     element("h2", questionText(question));
     const choices = element("div");
     choices.className = "answer-choices";
     options(question).forEach((option, index) => {
       const choice = button(option, () => {
         answers[position] = index;
-        if (position === questions.length - 1) submitAll();
-        else { position++; render(); }
+        render();
       }, choices);
       choice.setAttribute("aria-pressed", String(answers[position] === index));
     });
-    button(text("back"), () => {
-      if (position === 0) window.location.href = "../";
-      else { position--; render(); }
-    });
+    const confirm = button(text("confirm"), submitCurrent);
+    confirm.disabled = !Number.isInteger(answers[position]);
+    element("h3", text("jokers"));
+    const jokers = element("div");
+    jokers.className = "joker-buttons";
+    for (const label of ["50/50", text("telephone"), text("audience")]) {
+      const joker = element("button", label, jokers);
+      joker.type = "button";
+    }
   }
 
   async function load() {
@@ -99,7 +109,7 @@
       const response = await fetch("/api/daily");
       if (!response.ok) throw new Error("Daily API returned " + response.status);
       const quiz = await response.json();
-      if (!Array.isArray(quiz.questions) || quiz.questions.length !== 10 ||
+      if (!Array.isArray(quiz.questions) || quiz.questions.length !== 13 ||
           !quiz.questions.every(question => question.type === "multiple_choice" &&
             Array.isArray(question.data?.options_en) && question.data.options_en.length === 4 &&
             (!question.data.options_de || (Array.isArray(question.data.options_de) &&
@@ -120,22 +130,20 @@
     render();
   }
 
-  async function submitAll() {
-    if (state === "submitting" || answers.filter(Number.isInteger).length !== questions.length) return;
+  async function submitCurrent() {
+    if (state === "submitting" || !Number.isInteger(answers[position])) return;
     state = "submitting";
     render();
     try {
-      for (let index = 0; index < questions.length; index++) {
-        // Keep successful submissions when retrying a partially failed batch.
-        if (results[index]) continue;
+      if (!results[position]) {
         const response = await fetch("/api/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user_id: userId,
-            question_id: questions[index].id,
+            question_id: questions[position].id,
             quiz_date: quizDate,
-            answer: { selected_index: answers[index] },
+            answer: { selected_index: answers[position] },
           }),
         });
         if (!response.ok) throw new Error("Submit API returned " + response.status);
@@ -145,9 +153,14 @@
             result.correct_answer.correct_index < 0 || result.correct_answer.correct_index > 3) {
           throw new Error("Invalid submission result");
         }
-        results[index] = result;
+        results[position] = result;
       }
-      state = "results";
+      if (!results[position].is_correct || position === questions.length - 1) {
+        state = "results";
+      } else {
+        position++;
+        state = "quiz";
+      }
     } catch (error) {
       console.error("Daily quiz submission failed:", error);
       state = "submitError";
