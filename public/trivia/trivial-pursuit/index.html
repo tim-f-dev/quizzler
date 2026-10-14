@@ -12,11 +12,22 @@
 </head>
 <body data-page="trivialPursuit">
   <main>
-    <h1>Trivial Pursuit</h1>
+    <h1 id="trivia-title">Trivial Pursuit</h1>
     <button id="trivia-start" type="button" data-i18n="trivia.start">Start</button>
     <div id="trivia-categories" class="trivia-categories" hidden></div>
     <p id="trivia-status" role="status"></p>
-    <h2 id="trivia-question" hidden></h2>
+    <div id="trivia-card-scene" class="trivia-card-scene" hidden>
+      <div id="trivia-card" class="trivia-card">
+        <button id="trivia-question" class="trivia-card-face trivia-card-front" type="button">
+          <span id="trivia-question-text"></span>
+          <span class="trivia-flip-hint" data-i18n="trivia.reveal">Click to reveal the answer</span>
+        </button>
+        <div id="trivia-card-back" class="trivia-card-face trivia-card-back" aria-hidden="true" inert>
+          <h2 id="trivia-answer"></h2>
+          <button id="trivia-continue" type="button" data-i18n="trivia.continue">Continue</button>
+        </div>
+      </div>
+    </div>
   </main>
 </body>
 </html>

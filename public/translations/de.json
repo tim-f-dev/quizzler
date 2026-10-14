@@ -77,5 +77,7 @@
   "trivia.sports": "Sport & Freizeit",
   "trivia.loading": "Frage wird geladen...",
   "trivia.empty": "Für diese Kategorie ist keine Frage verfügbar.",
-  "trivia.error": "Die Frage konnte nicht geladen werden. Wähle eine Kategorie, um es erneut zu versuchen."
+  "trivia.error": "Die Frage konnte nicht geladen werden. Wähle eine Kategorie, um es erneut zu versuchen.",
+  "trivia.reveal": "Klicken, um die Antwort zu sehen",
+  "trivia.continue": "Weiter"
 }

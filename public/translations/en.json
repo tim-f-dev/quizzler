@@ -77,5 +77,7 @@
   "trivia.sports": "Sports & Leisure",
   "trivia.loading": "Loading question...",
   "trivia.empty": "No question is available for this category.",
-  "trivia.error": "Could not load a question. Choose a category to retry."
+  "trivia.error": "Could not load a question. Choose a category to retry.",
+  "trivia.reveal": "Click to reveal the answer",
+  "trivia.continue": "Continue"
 }

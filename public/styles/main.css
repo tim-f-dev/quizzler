@@ -351,3 +351,38 @@ body[data-page="daily"] .daily-title {
 .trivia-categories[hidden] { display: none; }
 #trivia-start { align-self: center; }
 #trivia-start[hidden] { display: none; }
+
+/* Category colors reuse the six shared --color-* variables above. */
+.trivia-card-scene { width: 100%; perspective: 1200px; margin: 16px auto; }
+.trivia-card-scene[hidden] { display: none; }
+.trivia-card {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease;
+}
+.trivia-card.is-flipped { transform: rotateY(180deg); }
+.trivia-card-face {
+  grid-area: 1 / 1;
+  min-width: 0;
+  min-height: clamp(260px, 42dvh, 440px);
+  padding: clamp(20px, 4vw, 48px);
+  border: 4px solid var(--category-color);
+  border-radius: 20px;
+  background: var(--color-beige);
+  color: var(--color-blue);
+  text-shadow: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  overflow-wrap: anywhere;
+}
+button.trivia-card-front { font-size: clamp(22px, 3vw, 34px); padding: clamp(20px, 4vw, 48px); line-height: 1.4; }
+button.trivia-card-front:hover { background: var(--color-beige); box-shadow: 0 4px 16px #0002; }
+.trivia-card-back { transform: rotateY(180deg); }
+.trivia-card-back h2 { margin: 0; font-size: clamp(24px, 3vw, 36px); }
+.trivia-flip-hint { font-size: 15px; font-weight: normal; }
+@media (prefers-reduced-motion: reduce) { .trivia-card { transition: none; } }

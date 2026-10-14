@@ -3,6 +3,14 @@
   const categories = document.getElementById("trivia-categories");
   const status = document.getElementById("trivia-status");
   const question = document.getElementById("trivia-question");
+  const questionText = document.getElementById("trivia-question-text");
+  const title = document.getElementById("trivia-title");
+  const scene = document.getElementById("trivia-card-scene");
+  const card = document.getElementById("trivia-card");
+  const back = document.getElementById("trivia-card-back");
+  const answer = document.getElementById("trivia-answer");
+  const next = document.getElementById("trivia-continue");
+  let selectedCategory;
   const choices = [
     ["Geography", "geography", "blue"],
     ["Entertainment", "entertainment", "red"],
@@ -31,7 +39,8 @@
     if (busy) return;
     busy = true;
     renderCategories();
-    question.hidden = true;
+    categories.hidden = true;
+    scene.hidden = true;
     status.textContent = text("loading", "Loading question...");
     try {
       const query = new URLSearchParams({ language, category });
@@ -44,8 +53,20 @@
         return;
       }
       if (typeof result.question !== "string") throw new Error("Invalid question response");
-      question.textContent = result.question;
-      question.hidden = false;
+      if (result.answer === null || result.answer === undefined) throw new Error("Missing answer");
+      selectedCategory = choices.find(choice => choice[1] === category);
+      title.textContent = text(selectedCategory[1], selectedCategory[0]);
+      title.style.color = "var(--color-" + selectedCategory[2] + ")";
+      scene.style.setProperty("--category-color", "var(--color-" + selectedCategory[2] + ")");
+      questionText.textContent = result.question;
+      answer.textContent = typeof result.answer === "string" ? result.answer : JSON.stringify(result.answer);
+      card.classList.remove("is-flipped");
+      back.inert = true;
+      back.setAttribute("aria-hidden", "true");
+      question.inert = false;
+      question.removeAttribute("aria-hidden");
+      scene.hidden = false;
+      question.focus({ preventScroll: true });
       status.textContent = "";
     } catch (error) {
       console.error("Trivia load failed:", error);
@@ -53,8 +74,29 @@
     } finally {
       busy = false;
       renderCategories();
+      if (scene.hidden) categories.hidden = false;
     }
   }
+  question.addEventListener("click", () => {
+    if (scene.hidden || card.classList.contains("is-flipped")) return;
+    card.classList.add("is-flipped");
+    question.inert = true;
+    question.setAttribute("aria-hidden", "true");
+    back.inert = false;
+    back.removeAttribute("aria-hidden");
+    next.focus({ preventScroll: true });
+  });
+  next.addEventListener("click", () => {
+    scene.hidden = true;
+    card.classList.remove("is-flipped");
+    title.textContent = "Trivial Pursuit";
+    title.style.color = "";
+    categories.hidden = false;
+    status.textContent = "";
+    renderCategories();
+    const index = choices.indexOf(selectedCategory);
+    categories.children[index]?.focus({ preventScroll: true });
+  });
   start.addEventListener("click", () => {
     start.hidden = true;
     categories.hidden = false;
@@ -63,6 +105,7 @@
   document.addEventListener("languagechange", event => {
     language = event.detail.language;
     labels = event.detail.labels;
+    if (!scene.hidden && selectedCategory) title.textContent = text(selectedCategory[1], selectedCategory[0]);
     renderCategories();
   });
 })();
