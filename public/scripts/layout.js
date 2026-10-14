@@ -6,11 +6,13 @@
   home.setAttribute("aria-label", "Home");
   home.dataset.i18nAriaLabel = "home";
   const logo = document.createElement("img");
-  logo.src = "/files/photos/quizzler%20wb.png";
+  logo.src = "/files/photos/quizzler_white.png";
   logo.alt = "Quizzler";
   home.append(logo);
   header.append(home);
-  document.body.prepend(header);
+  if (!document.body.hasAttribute("data-home-page")) {
+    document.body.prepend(header);
+  }
 
   const footer = document.createElement("footer");
   footer.className = "site-footer";

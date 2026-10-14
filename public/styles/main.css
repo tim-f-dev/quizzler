@@ -1,6 +1,14 @@
 :root {
+  /* Shared Quizzler palette. */
+  --color-beige: #f3ebdd;
+  --color-red: #650609;
+  --color-green: #18351D;
+  --color-gold: #B57A16;
+  --color-teal: #004454;
+  --color-blue: #162849;
+  --color-purple: #3C1933;
   color-scheme: light;
-  background: #f3ebdd;
+  background: var(--color-beige);
   color: #302b24;
   font-family: Arial, sans-serif;
 }
@@ -69,6 +77,24 @@ main button, main nav a {
 
 #daily-quiz > button { margin-top: 20px; }
 button:hover, main nav a:hover, .site-footer a:hover { background: #e8ddcb; }
+
+/* The four main links and quiz answers share the same color order. */
+main nav a, .answer-choices button {
+  background: var(--button-color);
+  border-color: var(--button-color);
+  color: var(--color-beige);
+}
+main nav a:nth-child(1), .answer-choices button:nth-child(1) { --button-color: var(--color-red); }
+main nav a:nth-child(2), .answer-choices button:nth-child(2) { --button-color: var(--color-green); }
+main nav a:nth-child(3), .answer-choices button:nth-child(3) {
+  --button-color: var(--color-gold);
+  color: #000;
+}
+main nav a:nth-child(4), .answer-choices button:nth-child(4) { --button-color: var(--color-teal); }
+main nav a:hover, .answer-choices button:hover {
+  background: var(--button-color);
+  filter: brightness(1.12);
+}
 :focus-visible { outline: 3px solid #746247; outline-offset: 3px; }
 button:disabled { opacity: .6; cursor: wait; }
 

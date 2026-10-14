@@ -77,6 +77,7 @@
     element("p", text("question") + " " + (position + 1) + "/" + questions.length);
     element("h2", questionText(question));
     const choices = element("div");
+    choices.className = "answer-choices";
     options(question).forEach((option, index) => {
       const choice = button(option, () => {
         answers[position] = index;
