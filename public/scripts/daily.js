@@ -15,6 +15,12 @@
     "daily.finish": "Show results",
     "daily.submitting": "Submitting answers...",
     "daily.question": "Question",
+    "daily.level": "Level",
+    "daily.levelReached": "Level reached",
+    "daily.jokersLeft": "Jokers left",
+    "daily.share": "Share",
+    "daily.copied": "Copied!",
+    "daily.copyManually": "Copy this text to share your result:",
     "daily.correct": "correct",
     "daily.wrong": "Wrong",
     "daily.showAnswers": "Show answers",
@@ -34,6 +40,22 @@
   let telephoneHint;
   let telephonePosition;
   const eliminated = [];
+  const levels = [
+    "🧱 Brick",
+    "🦠 Single Brain Cell",
+    "🐠 Goldfish",
+    "🐴 Donkey",
+    "🐙 Octopus",
+    "🪓 Caveman",
+    "🧍 Average Joe",
+    "🥚 Egghead",
+    "🎮 Twitch Moderator",
+    "💻 Wikipedia Editor",
+    "👨‍🏫 Professor",
+    "♟️ Chess Grandmaster",
+    "👔 Quizzler CEO",
+    "🌌 Galaxy Brain",
+  ];
 
   const text = key => labels["daily." + key] || fallback["daily." + key];
   function element(tag, content, parent = container) {
@@ -76,6 +98,47 @@
     if (state === "results") {
       const score = results.filter(result => result.is_correct).length;
       element("h2", score + " " + text("correct"));
+      element("p", text("levelReached") + ": " + levels[score]);
+      const jokersLeft = 3 - Number(fiftyUsed) - Number(telephoneUsed);
+      element("p", text("jokersLeft") + ": " + jokersLeft);
+      const shareText = [
+        "🧢Quizzler Daily",
+        "🏆 Level " + score + "/13: " + levels[score],
+        "🃏 Jokers left: " + jokersLeft,
+        "Think you can beat me?",
+        "https://quizzler.cc/daily",
+      ].join("\n");
+      const share = button(text("share"), async () => {
+        share.disabled = true;
+        try {
+          if (typeof navigator.share === "function") {
+            try {
+              await navigator.share({ text: shareText });
+              return;
+            } catch (error) {
+              if (error.name === "AbortError") return;
+            }
+          }
+          if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+          await navigator.clipboard.writeText(shareText);
+          shareStatus.textContent = text("copied");
+        } catch {
+          shareStatus.textContent = text("copyManually");
+          if (!manualCopy) {
+            manualCopy = element("textarea", shareText);
+            manualCopy.readOnly = true;
+            manualCopy.rows = 5;
+            manualCopy.setAttribute("aria-label", text("share"));
+          }
+          manualCopy.focus();
+          manualCopy.select();
+        } finally {
+          share.disabled = false;
+        }
+      });
+      const shareStatus = element("p");
+      shareStatus.setAttribute("role", "status");
+      let manualCopy;
       const accordion = element("details");
       element("summary", text("showAnswers"), accordion);
       questions.slice(0, results.length).forEach((question, index) => {
@@ -93,6 +156,7 @@
 
     const question = questions[position];
     element("p", text("question") + " " + (position + 1));
+    element("p", text("level") + ": " + levels[position + 1]);
     element("h2", questionText(question));
     const choices = element("div");
     choices.className = "answer-choices";

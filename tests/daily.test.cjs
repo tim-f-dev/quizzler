@@ -12,7 +12,7 @@ class Element {
   style = {};
 }
 
-function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0 } = {}) {
+function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator = {} } = {}) {
   const root = new Element("div");
   const speech = new Element("p");
   const window = { location: {} };
@@ -36,6 +36,7 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0 } = {}) {
     crypto: { randomUUID: () => "test-uuid" },
     Math: Object.assign(Object.create(Math), {random: () => 0.999}),
     window,
+    navigator,
     console: { error() {} },
     fetch: async (url, options) => {
       if (url === "/api/daily") return { ok: true, json: async () => ({ date: "2026-10-14", questions }) };
@@ -64,6 +65,25 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0 } = {}) {
   };
 }
 const tick = () => new Promise(setImmediate);
+
+test("share copies the actual result in the requested format", async () => {
+ let copied;
+ const quiz=fixture({wrongAt:10,navigator:{clipboard:{writeText:async value=>{copied=value;}}}});
+ await tick();
+ for(let index=0;index<10;index++){quiz.click('A');quiz.click('Confirm');await tick();}
+ quiz.click('Share');await tick();
+ assert.equal(copied,"🧢Quizzler Daily\n🏆 Level 9/13: 💻 Wikipedia Editor\n🃏 Jokers left: 3\nThink you can beat me?\nhttps://quizzler.cc/daily");
+ assert(quiz.texts().includes('Copied!'));
+});
+
+test("native share includes actual remaining jokers", async () => {
+ let shared;
+ const quiz=fixture({wrongAt:1,navigator:{share:async value=>{shared=value.text;}}});
+ await tick();quiz.click('50/50');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ quiz.click('Share');await tick();
+ assert(shared.includes('🏆 Level 0/13: 🧱 Brick'));
+ assert(shared.includes('🃏 Jokers left: 1'));
+});
 
 test("telephone response weights, correct and wrong hints, bilingual formatting", () => {
  const window = {};
@@ -118,6 +138,7 @@ test("first wrong answer ends the quiz with one collapsed review accordion", asy
  }
  assert.equal(quiz.calls.length,9);
  assert(quiz.texts().includes('8 correct'));
+ assert(quiz.texts().includes('Level reached: 🎮 Twitch Moderator'));
  const accordions=quiz.root.children.filter(node=>node.tag==='details');
  assert.equal(accordions.length,1);
  const details=accordions[0];
@@ -140,6 +161,7 @@ test("all thirteen correct answers finish the quiz without showing a total",asyn
  const quiz=fixture({wrongAt:0,correctIndex:2}); await tick();
  for(let index=0;index<13;index++){quiz.click('C');quiz.click('Confirm');await tick();}
  assert.equal(quiz.calls.length,13); assert(quiz.texts().includes('13 correct'));
+ assert(quiz.texts().includes('Level reached: 🌌 Galaxy Brain'));
  assert(quiz.calls.every(call=>call.quiz_date==='2026-10-14'));
 });
 
@@ -163,4 +185,19 @@ test("incomplete daily quiz is unavailable without revealing the total",async()=
  const quiz=fixture({count:10});await tick();
  assert(quiz.texts().some(text=>text.includes('not available')));
  assert(!quiz.texts().some(text=>text.includes('13')));
+});
+
+test("first question targets level one and first failure earns level zero", async () => {
+ const quiz=fixture({wrongAt:1});await tick();
+ assert(quiz.texts().includes('Level: 🦠 Single Brain Cell'));
+ quiz.click('A');quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('Level reached: 🧱 Brick'));
+ assert(quiz.texts().includes('0 correct'));
+ assert(quiz.texts().includes('Jokers left: 3'));
+});
+
+test("results count used 50/50 and phone jokers", async () => {
+ const quiz=fixture({wrongAt:1});await tick();
+ quiz.click('50/50');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('Jokers left: 1'));
 });

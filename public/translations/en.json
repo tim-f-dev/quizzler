@@ -59,5 +59,11 @@
   "daily.jokers": "Jokers",
   "daily.telephone": "phone",
   "daily.audience": "audience",
-  "daily.jokerError": "Could not use 50/50. Please try again."
+  "daily.jokerError": "Could not use 50/50. Please try again.",
+  "daily.level": "Level",
+  "daily.levelReached": "Level reached",
+  "daily.jokersLeft": "Jokers left",
+  "daily.share": "Share",
+  "daily.copied": "Copied!",
+  "daily.copyManually": "Copy this text to share your result:"
 }
