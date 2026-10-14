@@ -6,7 +6,7 @@
   home.setAttribute("aria-label", "Home");
   home.dataset.i18nAriaLabel = "home";
   const logo = document.createElement("img");
-  logo.src = "/files/photos/quizzler_bluecap.png";
+  logo.src = "/files/photos/quizzler_blueyellow.png";
   logo.alt = "Quizzler";
   home.append(logo);
   header.append(home);

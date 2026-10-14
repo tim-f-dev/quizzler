@@ -82,6 +82,7 @@
   }
 
   function render() {
+    container.dataset.state = state;
     const speech = document.getElementById("telephone-speech");
     if (speech) {
       speech.hidden = state !== "quiz" || !telephoneHint || telephonePosition !== position;
@@ -242,6 +243,20 @@
         }
       });
     }
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(fitAnswerText);
+  }
+
+  function fitAnswerText() {
+    if (state !== "quiz") return;
+    container.querySelectorAll(".answer-choices button").forEach(choice => {
+      choice.style.fontSize = "";
+      let size = parseFloat(getComputedStyle(choice).fontSize);
+      while (size > 10 && (choice.scrollHeight > choice.clientHeight ||
+          choice.scrollWidth > choice.clientWidth)) {
+        size--;
+        choice.style.fontSize = size + "px";
+      }
+    });
   }
 
   function useFiftyFifty() {
@@ -338,5 +353,9 @@
     labels = event.detail.labels;
     render();
   });
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver(fitAnswerText).observe(container);
+    document.fonts?.ready.then(fitAnswerText);
+  }
   load();
 })();

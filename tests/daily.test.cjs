@@ -10,6 +10,7 @@ class Element {
   setAttribute(name, value) { this[name] = value; }
   addEventListener(type, listener) { this[type] = listener; }
   style = {};
+  dataset = {};
 }
 
 function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator = {} } = {}) {
