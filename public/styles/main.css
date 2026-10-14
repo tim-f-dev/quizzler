@@ -108,9 +108,23 @@ a { color: inherit; }
 
 .home-logo {
   display: block;
-  width: min(100%, 400px);
+  width: min(100%, 400px, 38dvh);
   height: auto;
   margin: 0 auto 32px;
+}
+
+body[data-home-page] .home-title {
+  font-size: clamp(36px, min(11vw, 9dvh), 88px);
+}
+
+/* Allocate the remaining height directly instead of subtracting fixed totals. */
+body[data-page="daily"]:has(#daily-quiz[data-state="quiz"]) {
+  height: 100dvh;
+}
+body[data-page="daily"]:has(#daily-quiz[data-state="quiz"]) main {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 0;
 }
 
 main nav, #daily-quiz > div {
