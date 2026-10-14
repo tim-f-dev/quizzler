@@ -1,7 +1,13 @@
 
+import { handleAdmin } from "./admin.js";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const path = decodeURIComponent(url.pathname).replace(/\/+/g, "/");
+    if (/^\/admin(?:\/|\.|$)/.test(path) || /^\/api\/admin(?:\/|$)/.test(path)) {
+      return handleAdmin(request, env, url);
+    }
 
     if (url.pathname === "/api/questions") {
       const { results } = await env.DB

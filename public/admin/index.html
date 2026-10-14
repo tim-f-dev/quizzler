@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Quizzler</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/admin.css">
+  <script src="/scripts/layout.js" defer></script>
+  <script src="/scripts/language.js" defer></script>
+  <script src="/scripts/admin.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Quizzler Admin</h1>
+    <label>Implemented day <select id="days"><option value="">Select a day</option></select></label>
+    <div class="admin-new-day">
+      <label>New day <input id="new-date" type="date"></label>
+      <button id="new-day" type="button">Add new day</button>
+    </div>
+    <p id="admin-status" role="status"></p>
+    <form id="editor" hidden>
+      <h2 id="editing-date"></h2>
+      <div id="questions"></div>
+      <button type="submit">Save all 13 questions</button>
+    </form>
+  </main>
+</body>
+</html>

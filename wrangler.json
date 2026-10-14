@@ -3,6 +3,9 @@
   "main": "src/index.js",
   "compatibility_date": "2026-10-13",
   "upload_source_maps": true,
+  "vars": {
+    "ADMIN_IP": "94.31.114.255"
+  },
   "d1_databases": [
     {
       "binding": "DB",
@@ -13,6 +16,6 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": true
   }
 }
