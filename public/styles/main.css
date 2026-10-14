@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("/files/fonts/NunitoSans.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fredoka";
+  src: url("/files/fonts/Fredoka.ttf") format("truetype");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Shared Quizzler palette. */
   --color-beige: #f3ebdd;
@@ -10,7 +26,7 @@
   color-scheme: light;
   background: var(--color-beige);
   color: #302b24;
-  font-family: Arial, sans-serif;
+  font-family: "Nunito Sans", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -46,6 +62,22 @@ h1, h2 { margin: 0 0 24px; }
 p { line-height: 1.6; }
 address { font-style: normal; line-height: 1.6; }
 a { color: inherit; }
+
+.home-title {
+  font-family: "Fredoka", "Nunito Sans", sans-serif;
+  font-size: clamp(40px, 11vw, 88px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: .025em;
+  white-space: nowrap;
+  margin-bottom: 24px;
+}
+.home-title span:nth-child(6n + 1) { color: var(--color-red); }
+.home-title span:nth-child(6n + 2) { color: var(--color-green); }
+.home-title span:nth-child(6n + 3) { color: var(--color-gold); }
+.home-title span:nth-child(6n + 4) { color: var(--color-teal); }
+.home-title span:nth-child(6n + 5) { color: var(--color-blue); }
+.home-title span:nth-child(6n + 6) { color: var(--color-purple); }
 
 .home-logo {
   display: block;
