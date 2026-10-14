@@ -66,5 +66,16 @@
   "daily.copied": "Kopiert!",
   "daily.copyManually": "Kopiere diesen Text, um dein Ergebnis zu teilen:",
   "daily.copyResult": "Ergebnis kopieren",
-  "daily.chat": "chat"
+  "daily.chat": "chat",
+  "trivialPursuit": "Trivial Pursuit",
+  "trivia.start": "Start",
+  "trivia.geography": "Geografie",
+  "trivia.entertainment": "Unterhaltung",
+  "trivia.history": "Geschichte",
+  "trivia.arts": "Kunst & Literatur",
+  "trivia.science": "Wissenschaft & Natur",
+  "trivia.sports": "Sport & Freizeit",
+  "trivia.loading": "Frage wird geladen...",
+  "trivia.empty": "Für diese Kategorie ist keine Frage verfügbar.",
+  "trivia.error": "Die Frage konnte nicht geladen werden. Wähle eine Kategorie, um es erneut zu versuchen."
 }

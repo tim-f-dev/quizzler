@@ -1,12 +1,70 @@
 
 import { handleAdmin } from "./admin.js";
+import { localizedPage } from "./localized-pages.js";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = decodeURIComponent(url.pathname).replace(/\/+/g, "/");
+    const localized = path.match(/^\/(en|de)(\/.*)?$/);
+    if (localized) {
+      const language = localized[1];
+      if (!localized[2]) {
+        url.pathname = "/" + language + "/";
+        return Response.redirect(url.toString(), 302);
+      }
+      const pagePath = localized[2] || "/";
+      const assetURL = new URL(request.url);
+      assetURL.pathname = pagePath;
+      const assetRequest = new Request(assetURL, request);
+      // Keep trusted Cloudflare metadata on the internally rewritten admin request.
+      if (request.cf && !assetRequest.cf) Object.defineProperty(assetRequest, "cf", { value: request.cf });
+      const response = /^\/admin(?:\/|\.|$)/.test(pagePath)
+        ? await handleAdmin(assetRequest, env, assetURL)
+        : await env.ASSETS.fetch(assetRequest);
+      return localizedPage(response, env, language, pagePath);
+    }
     if (/^\/admin(?:\/|\.|$)/.test(path) || /^\/api\/admin(?:\/|$)/.test(path)) {
-      return handleAdmin(request, env, url);
+      const response = await handleAdmin(request, env, url);
+      if (!path.startsWith("/api/") && response.ok) {
+        url.pathname = "/en" + path;
+        return Response.redirect(url.toString(), 302);
+      }
+      return response;
+    }
+    const aliases = { quiz: "trivia", impressum: "legal-notice", datenschutz: "privacy-policy" };
+    const page = path.replace(/^\//, "").replace(/\/(?:index.html)?$/, "");
+    if (/^\/trivia\/trivial(?:-| )pursuit(?:\/|\/index.html)?$/.test(path)) {
+      url.pathname = "/en/trivia/trivial-pursuit/";
+      return Response.redirect(url.toString(), 302);
+    }
+    if (path === "/" || path === "/index.html" || aliases[page] ||
+        ["daily", "trivia", "about", "other", "legal-notice", "privacy-policy", "daily/index.html", "trivia/index.html", "about/index.html", "other/index.html", "legal-notice/index.html", "privacy-policy/index.html"].includes(page)) {
+      url.pathname = "/en/" + (aliases[page] || (page === "index.html" ? "" : page));
+      return Response.redirect(url.toString(), 302);
+    }
+
+    if (url.pathname === "/api/trivia/random" && request.method === "GET") {
+      const language = url.searchParams.get("language") || "en";
+      const category = url.searchParams.get("category");
+      const categories = ["Geography", "Entertainment", "History", "Arts & Literature", "Science & Nature", "Sports & Leisure"];
+      if (!["en", "de"].includes(language) || !categories.includes(category)) {
+        return Response.json({ error: "Invalid language or category" }, { status: 400 });
+      }
+      try {
+        const question = await env.TRIVIA_DB.prepare(`
+          SELECT id, question, category, difficulty, answer
+          FROM questions
+          WHERE language = ? AND category = ?
+          ORDER BY RANDOM()
+          LIMIT 1
+        `).bind(language, category).first();
+        if (!question) return Response.json({ error: "No question available" }, { status: 404 });
+        return Response.json(question, { headers: { "Cache-Control": "no-store" } });
+      } catch (error) {
+        console.error("Trivia API error:", error);
+        return Response.json({ error: "Failed to load trivia question" }, { status: 500 });
+      }
     }
 
     if (url.pathname === "/api/questions") {

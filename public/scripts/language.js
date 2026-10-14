@@ -2,15 +2,8 @@
   const translationsBase = new URL("../translations/", document.currentScript.src);
   const button = document.getElementById("language-switcher");
   const translations = {};
-  let language = "en";
+  let language = window.location.pathname.split('/')[1] === 'de' ? 'de' : 'en';
   let busy = false;
-
-  try {
-    const saved = localStorage.getItem("quizzler-language");
-    if (saved === "de" || saved === "en") language = saved;
-  } catch {
-    // Switching still works when browser storage is unavailable.
-  }
 
   async function applyLanguage(nextLanguage) {
     if (busy) return;
@@ -54,7 +47,12 @@
   }
 
   if (button) {
-    button.addEventListener("click", () => applyLanguage(language === "en" ? "de" : "en"));
+    button.addEventListener("click", () => {
+      const next = language === "en" ? "de" : "en";
+      const url = new URL(window.location.href);
+      url.pathname = url.pathname.replace(/^\/(en|de)(?=\/|$)/, '/' + next);
+      window.location.assign(url.toString());
+    });
     applyLanguage(language);
   }
 })();

@@ -345,3 +345,9 @@ body[data-page="daily"] .daily-title {
   #daily-quiz[data-state="quiz"] .chat-answer .answer-label { padding: 2px; }
   #daily-quiz[data-state="quiz"] .chat-answer .answer-percentage { padding: 2px; width: 26%; }
 }
+
+.trivia-game-link { display: inline-block; align-self: center; padding: 20px 32px; background: var(--color-blue); color: white; border-radius: 8px; font-size: 22px; text-decoration: none; text-shadow: 0 1px 3px #000; }
+.trivia-categories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.trivia-categories[hidden] { display: none; }
+#trivia-start { align-self: center; }
+#trivia-start[hidden] { display: none; }

@@ -1,8 +1,14 @@
 (() => {
+  const languageCode = window.location.pathname.split('/')[1] === 'de' ? 'de' : 'en';
+  const prefix = '/' + languageCode;
+  document.querySelectorAll("[data-site-path]").forEach(link => {
+    link.href = prefix + link.dataset.sitePath;
+  });
+  document.documentElement.lang = languageCode;
   const header = document.createElement("header");
   header.className = "site-header";
   const home = document.createElement("a");
-  home.href = "/";
+  home.href = prefix + "/";
   home.setAttribute("aria-label", "Home");
   home.dataset.i18nAriaLabel = "home";
   const logo = document.createElement("img");
@@ -29,7 +35,7 @@
     ["privacy-policy", "Privacy Policy"],
   ]) {
     const link = document.createElement("a");
-    link.href = "/" + path + "/";
+    link.href = prefix + "/" + path + "/";
     link.dataset.i18n = path;
     link.textContent = label;
     footer.append(link);

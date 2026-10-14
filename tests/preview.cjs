@@ -14,6 +14,11 @@ const adminDays = new Map([["2026-10-14", Array.from({length:13},(_,i)=>({
 }))]]);
 http.createServer(async (req,res)=>{
  const url = new URL(req.url,'http://localhost');
+ url.pathname = url.pathname.replace(/^\/(en|de)(?=\/|$)/, '') || '/';
+ if(url.pathname === '/api/trivia/random') {
+  res.setHeader('Content-Type','application/json');
+  res.end(JSON.stringify({id:1,question:url.searchParams.get('language')==='de'?'Was ist die Hauptstadt Australiens?':'What is the capital of Australia?',category:url.searchParams.get('category'),difficulty:1,answer:'Canberra'}));return;
+ }
  if(url.pathname === '/api/admin/days') {
   res.setHeader('Content-Type','application/json');
   res.end(JSON.stringify({days:[...adminDays.keys()].sort().reverse()}));return;
@@ -32,7 +37,7 @@ http.createServer(async (req,res)=>{
  }
  if(url.pathname === '/api/answers'){res.setHeader('Content-Type','application/json');res.end('{"saved":true}');return;}
  let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
- if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
+ if(file!==root && !file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
  if(fs.existsSync(file)&&fs.statSync(file).isDirectory())file=path.join(file,'index.html');
  if(!fs.existsSync(file)){res.writeHead(404);res.end();return;}
  const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.png':'image/png','.ttf':'font/ttf'};

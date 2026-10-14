@@ -3,6 +3,18 @@
 Static site assets live in `public/`. The Worker entry point is
 `src/index.js`, configured in `wrangler.json`.
 
+Pages use `/en/` and `/de/` prefixes (for example `/en/trivia/` and
+`/de/trivia/`). The Worker serves the shared HTML with the requested language;
+old page URLs redirect to English. The language button navigates to the same
+page in the other language. Static assets and API endpoints remain at their
+existing root paths. Admin access remains restricted on both language routes.
+
+Trivial Pursuit lives at `/<language>/trivia/trivial-pursuit/` and uses the
+`TRIVIA_DB` D1 binding. `GET /api/trivia/random?language=en&category=Geography`
+selects one random question using the requested `en`/`de` language and one of
+the six category names. The database must have a `questions` table containing
+`id`, `question`, `language`, `category`, `difficulty`, and `answer`.
+
 Run locally with `npx wrangler dev`.
 Deploy with `npx wrangler deploy`.
 

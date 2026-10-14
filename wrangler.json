@@ -11,6 +11,11 @@
       "binding": "DB",
       "database_name": "daily",
       "database_id": "511954d9-954a-4bb0-8df8-a14cae8b457a"
+    },
+    {
+      "binding": "TRIVIA_DB",
+      "database_name": "trivial-pursuit",
+      "database_id": "31e7e6ed-73db-4197-ae8e-ed37494d5a31"
     }
   ],
   "assets": {

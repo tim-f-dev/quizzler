@@ -66,5 +66,16 @@
   "daily.copied": "Copied!",
   "daily.copyManually": "Copy this text to share your result:",
   "daily.copyResult": "Copy Result",
-  "daily.chat": "chat"
+  "daily.chat": "chat",
+  "trivialPursuit": "Trivial Pursuit",
+  "trivia.start": "Start",
+  "trivia.geography": "Geography",
+  "trivia.entertainment": "Entertainment",
+  "trivia.history": "History",
+  "trivia.arts": "Arts & Literature",
+  "trivia.science": "Science & Nature",
+  "trivia.sports": "Sports & Leisure",
+  "trivia.loading": "Loading question...",
+  "trivia.empty": "No question is available for this category.",
+  "trivia.error": "Could not load a question. Choose a category to retry."
 }

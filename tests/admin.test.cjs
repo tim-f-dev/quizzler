@@ -5,8 +5,10 @@ const { DatabaseSync } = require("node:sqlite");
 
 const dataURL = source => "data:text/javascript;base64," + Buffer.from(source).toString("base64");
 const adminURL = dataURL(fs.readFileSync("src/admin.js", "utf8"));
+const localizedURL = dataURL(fs.readFileSync("src/localized-pages.js", "utf8"));
 const workerPromise = import(dataURL(fs.readFileSync("src/index.js", "utf8")
-  .replace('"./admin.js"', JSON.stringify(adminURL)))).then(module => module.default);
+  .replace('"./admin.js"', JSON.stringify(adminURL))
+  .replace('"./localized-pages.js"', JSON.stringify(localizedURL)))).then(module => module.default);
 
 function fixture() {
   const sqlite = new DatabaseSync(":memory:");
@@ -70,7 +72,7 @@ const questions = () => Array.from({ length: 13 }, (_, index) => ({
 
 test("all admin HTML aliases and APIs deny wrong or missing IP before database/assets", async () => {
   const worker = await workerPromise;
-  for (const path of ["/admin", "/admin/", "/admin/index.html", "/admin.html", "//admin/", "/%61dmin/", "/api/admin/days", "/api/admin/day?date=2026-10-14"]) {
+  for (const path of ["/admin", "/admin/", "/en/admin/", "/de/admin/index.html", "/admin/index.html", "/admin.html", "//admin/", "/%61dmin/", "/api/admin/days", "/api/admin/day?date=2026-10-14"]) {
     const env = { ADMIN_IP: "94.31.114.255" };
     for (const ip of ["203.0.113.1", ""]) {
       const response = await worker.fetch(request(path, "GET", undefined, {
@@ -86,12 +88,12 @@ test("all admin HTML aliases and APIs deny wrong or missing IP before database/a
 test("admin page allows configured IP, rejects Worker subrequests and normalizes IPv6", async () => {
   const worker = await workerPromise;
   const { env } = fixture();
-  const response = await worker.fetch(request("/admin/"), env);
+  const response = await worker.fetch(request("/en/admin/"), env);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("Cache-Control"), "no-store");
   assert.equal((await worker.fetch(request("/admin/", "GET", undefined, { "CF-Worker": "attacker.example" }), env)).status, 403);
   env.ADMIN_IP = "2001:db8::1";
-  assert.equal((await worker.fetch(request("/admin/", "GET", undefined, { "CF-Connecting-IP": "2001:0db8:0:0:0:0:0:1" }), env)).status, 200);
+  assert.equal((await worker.fetch(request("/en/admin/", "GET", undefined, { "CF-Connecting-IP": "2001:0db8:0:0:0:0:0:1" }), env)).status, 200);
 });
 
 test("create, list, read and edit a full day with isolated question rows", async () => {
