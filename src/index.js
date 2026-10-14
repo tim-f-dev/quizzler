@@ -47,7 +47,7 @@ export default {
     if (url.pathname === "/api/trivia/random" && request.method === "GET") {
       const language = url.searchParams.get("language") || "en";
       const category = url.searchParams.get("category");
-      const categories = ["Geography", "Entertainment", "History", "Arts & Literature", "Science & Nature", "Sports & Leisure"];
+      const categories = ["geography", "entertainment", "history", "arts", "science", "sports"];
       if (!["en", "de"].includes(language) || !categories.includes(category)) {
         return Response.json({ error: "Invalid language or category" }, { status: 400 });
       }

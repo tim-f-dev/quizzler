@@ -32,7 +32,7 @@ test("start shows six colored categories and category fetch shows only the quest
  buttons[3].click();await new Promise(setImmediate);
  assert.equal(request().pathname,"/api/trivia/random");
  assert.equal(request().searchParams.get("language"),"de");
- assert.equal(request().searchParams.get("category"),"Arts & Literature");
+ assert.equal(request().searchParams.get("category"),"arts");
  assert.equal(ids["trivia-question"].textContent,"Beispielfrage?");
  assert(!ids["trivia-question"].hidden);
  assert(ids["trivia-categories"].children.every(button=>!button.disabled));

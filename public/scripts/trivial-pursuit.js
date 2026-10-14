@@ -23,7 +23,7 @@
       button.textContent = text(key, category);
       button.style.background = "var(--color-" + color + ")";
       button.disabled = busy;
-      button.addEventListener("click", () => load(category));
+      button.addEventListener("click", () => load(key));
       categories.append(button);
     });
   }

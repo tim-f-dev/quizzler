@@ -10,9 +10,10 @@ page in the other language. Static assets and API endpoints remain at their
 existing root paths. Admin access remains restricted on both language routes.
 
 Trivial Pursuit lives at `/<language>/trivia/trivial-pursuit/` and uses the
-`TRIVIA_DB` D1 binding. `GET /api/trivia/random?language=en&category=Geography`
+`TRIVIA_DB` D1 binding. `GET /api/trivia/random?language=en&category=geography`
 selects one random question using the requested `en`/`de` language and one of
-the six category names. The database must have a `questions` table containing
+the category keys: `geography`, `entertainment`, `history`, `arts`, `science`,
+or `sports`. The database must have a `questions` table containing
 `id`, `question`, `language`, `category`, `difficulty`, and `answer`.
 
 Run locally with `npx wrangler dev`.

@@ -57,14 +57,14 @@ test("explicit URL language wins over saved preference and switching keeps page/
 
 test("random trivia API binds the requested category and language", async () => {
  const app=await worker;
- for(const language of ["en","de"]) for(const category of ["Geography","Entertainment","History","Arts & Literature","Science & Nature","Sports & Leisure"]) {
+ for(const language of ["en","de"]) for(const category of ["geography","entertainment","history","arts","science","sports"]) {
   const response=await app.fetch(new Request("https://quizzler.cc/api/trivia/random?"+new URLSearchParams({language,category})),{
    TRIVIA_DB:{prepare(sql){assert.match(sql,/ORDER BY RANDOM\(\)/);return {bind(...values){assert.deepEqual(values,[language,category]);return {first:async()=>({id:1,question:"Example",category,answer:"Answer"})};}};}}
   });
   assert.equal(response.status,200);assert.equal((await response.json()).question,"Example");
  }
- assert.equal((await app.fetch(new Request("https://quizzler.cc/api/trivia/random?language=fr&category=History"),{})).status,400);
+ assert.equal((await app.fetch(new Request("https://quizzler.cc/api/trivia/random?language=fr&category=history"),{})).status,400);
  assert.equal((await app.fetch(new Request("https://quizzler.cc/api/trivia/random?category=invalid"),{})).status,400);
- const response=await app.fetch(new Request("https://quizzler.cc/api/trivia/random?language=en&category=History"),{TRIVIA_DB:{prepare:()=>({bind:()=>({first:async()=>null})})}});
+ const response=await app.fetch(new Request("https://quizzler.cc/api/trivia/random?language=en&category=history"),{TRIVIA_DB:{prepare:()=>({bind:()=>({first:async()=>null})})}});
  assert.equal(response.status,404);
 });
