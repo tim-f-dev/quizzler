@@ -61,13 +61,13 @@ const tick = () => new Promise(setImmediate);
 test("ten questions, back navigation, no early feedback, score and bilingual review", async () => {
   const quiz = fixture();
   await tick();
-  quiz.click("A"); quiz.click("Next"); quiz.click("Back");
+  quiz.click("A"); quiz.click("Back");
   quiz.click("B");
-  for (let index = 0; index < 10; index++) {
-    if (index !== 0) quiz.click("A");
+  for (let index = 1; index < 10; index++) {
+    assert(quiz.texts().includes("Question " + (index + 1) + "/10"));
     assert.equal(quiz.calls.length, 0);
     assert(!quiz.texts().includes("Correct answer: C"));
-    quiz.click(index === 9 ? "Show results" : "Next");
+    quiz.click("A");
   }
   await tick();
   assert.equal(quiz.calls.length, 10);
@@ -89,7 +89,7 @@ test("retry retains successful submissions and delays results until completion",
   const quiz = fixture({ failAt: 5 });
   await tick();
   for (let index = 0; index < 10; index++) {
-    quiz.click("A"); quiz.click(index === 9 ? "Show results" : "Next");
+    quiz.click("A");
   }
   await tick();
   assert(!quiz.texts().includes("8/10 correct"));

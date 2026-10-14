@@ -80,22 +80,15 @@
     options(question).forEach((option, index) => {
       const choice = button(option, () => {
         answers[position] = index;
-        render();
+        if (position === questions.length - 1) submitAll();
+        else { position++; render(); }
       }, choices);
       choice.setAttribute("aria-pressed", String(answers[position] === index));
-      // Native disabled styling marks the selected answer without extra CSS.
-      choice.disabled = answers[position] === index;
     });
     button(text("back"), () => {
       if (position === 0) window.location.href = "../";
       else { position--; render(); }
     });
-    const next = button(text(position === questions.length - 1 ? "finish" : "next"), () => {
-      if (answers[position] === undefined) return;
-      if (position === questions.length - 1) submitAll();
-      else { position++; render(); }
-    });
-    next.disabled = answers[position] === undefined;
   }
 
   async function load() {
