@@ -12,8 +12,21 @@
 </head>
 <body data-page="trivialPursuit">
   <main>
-    <h1 id="trivia-title">Trivial Pursuit</h1>
-    <button id="trivia-start" type="button" data-i18n="trivia.start">Start</button>
+    <h1 id="trivia-title" data-i18n="trivia.landingTitle">Play new Trivial Pursuit questions online for free</h1>
+    <div id="trivia-intro" class="trivia-intro">
+      <p data-i18n="trivia.landingDescription">Your board is still in great shape, but the questions are outdated? Play fresh quiz questions in six categories on your phone, without buying new cards.</p>
+      <h2 data-i18n="trivia.landingCategories">Six categories, new challenges</h2>
+      <ul class="trivia-category-preview">
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"/><circle cx="12" cy="12" r="10"/></g></svg><span data-i18n="trivia.geography">Geography</span></li>
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12.296 3.464l3.02 3.956M20.2 6L3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3zM3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm3.18-5.724l3.1 3.899"/></svg><span data-i18n="trivia.entertainment">Entertainment</span></li>
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 12h-5m5-4h-5m9 9V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></g></svg><span data-i18n="trivia.history">History</span></li>
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v16m8.001-2A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2a5 5 0 0 1 4-2z"/></svg><span data-i18n="trivia.arts">Arts &amp; Literature</span></li>
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18h8M3 22h18m-7 0a7 7 0 1 0 0-14h-1m-4 6h2m-2-2a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Zm3-6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg><span data-i18n="trivia.landingScience">Science</span></li>
+        <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false" class="trivia-category-icon"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 14.66V17a1 1 0 0 1-1 1a2 2 0 0 0-2 2v2m7-7.34V17a1 1 0 0 0 1 1a2 2 0 0 1 2 2v2m.916-12H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"/></g></svg><span data-i18n="trivia.sports">Sports &amp; Leisure</span></li>
+      </ul>
+      <button id="trivia-start" type="button" data-i18n="trivia.startQuestions">Start quiz questions now</button>
+      <p class="trivia-signup-note" data-i18n="trivia.noSignup">No sign-up · German &amp; English</p>
+    </div>
     <div id="trivia-categories" class="trivia-categories" hidden></div>
     <p id="trivia-status" role="status"></p>
     <div id="trivia-card-scene" class="trivia-card-scene" hidden>

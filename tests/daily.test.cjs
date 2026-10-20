@@ -13,7 +13,7 @@ class Element {
   dataset = {};
 }
 
-function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator = {} } = {}) {
+function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator = {}, localStorage = {}, random = () => 0.999, quizDate = "2026-10-14" } = {}) {
   const root = new Element("div");
   const speech = new Element("p");
   const window = { location: {} };
@@ -36,12 +36,13 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
       addEventListener: (name, listener) => { listeners[name] = listener; },
     },
     crypto: { randomUUID: () => "test-uuid" },
-    Math: Object.assign(Object.create(Math), {random: () => 0.999}),
+    Math: Object.assign(Object.create(Math), {random}),
     window,
     navigator,
+    localStorage,
     console: { error() {} },
     fetch: async (url, options) => {
-      if (url === "/api/daily") return { ok: true, json: async () => ({ date: "2026-10-14", questions }) };
+      if (url === "/api/daily") return { ok: true, json: async () => ({ date: quizDate, questions }) };
       assert.equal(url, "/api/answers");
       const body = JSON.parse(options.body);
       calls.push(body);
@@ -64,10 +65,90 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
       assert(!button.disabled, "Disabled button " + label);
       button.click();
     },
+    confirm() {
+      const confirm = nodes().find(node => node.tag === 'button' && node.textContent === 'Confirm');
+      assert(confirm && !confirm.disabled);
+      confirm.click();
+      const anyway = nodes().find(node => node.tag === 'button' && node.textContent === 'Confirm');
+      if (anyway) anyway.click();
+    },
     texts: () => nodes().map(node => node.textContent),
   };
 }
 const tick = () => new Promise(setImmediate);
+
+function memoryStorage() {
+ const data=new Map();
+ return {getItem:key=>data.get(key)||null,setItem:(key,value)=>data.set(key,value)};
+}
+test("correct-answer warning uses 8 percent threshold without consuming wrong-answer warning",async()=>{
+ const quiz=fixture({wrongAt:2,random:()=>0.079});await tick();
+ quiz.click('A');quiz.click('Confirm');
+ assert.equal(quiz.calls.length,0);
+ assert(!quiz.speech.hidden);
+ assert(quiz.texts().includes('Confirm'));
+ assert(!quiz.texts().includes('Confirm anyway'));
+ quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('Question 2'));
+ quiz.click('A');quiz.click('Confirm');
+ assert.equal(quiz.calls.length,1);
+ assert(!quiz.speech.hidden);
+ quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('1 correct'));
+ const noWarning=fixture({wrongAt:0,random:()=>0.08});await tick();
+ noWarning.click('A');noWarning.click('Confirm');await tick();
+ assert.equal(noWarning.calls.length,1);
+});
+test("German level names appear on questions and results",async()=>{
+ const quiz=fixture({wrongAt:1});await tick();
+ quiz.listeners.languagechange({detail:{language:'de',labels:JSON.parse(fs.readFileSync('public/translations/de.json','utf8'))}});
+ assert(quiz.texts().includes('🦠 Einzelne Gehirnzelle'));
+ quiz.click('AA');quiz.click('Bestätigen');quiz.click('Bestätigen');await tick();
+ assert(quiz.texts().includes('Erreichtes Level: 🧱 Ziegelstein'));
+});
+test("first wrong confirmation offers a saved second chance without submitting", async () => {
+ const storage=memoryStorage();
+ let quiz=fixture({localStorage:storage,wrongAt:1});await tick();
+ quiz.click('A');quiz.click('Confirm');await tick();
+ assert.equal(quiz.calls.length,0);
+ assert.equal(quiz.speech.textContent,'Are you certain? Or do you want to change your answer?');
+ assert(!quiz.speech.hidden);
+ quiz=fixture({localStorage:storage,wrongAt:1});await tick();
+ assert(!quiz.speech.hidden);
+ assert(quiz.texts().includes('Confirm'));
+ quiz.click('C');quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('Question 2'));
+ quiz.click('B');quiz.click('Confirm');await tick();
+ assert(quiz.texts().includes('1 correct'));
+});
+test("confirming anyway ends the quiz with the original wrong answer",async()=>{
+ const quiz=fixture({wrongAt:1});await tick();
+ quiz.click('A');quiz.click('Confirm');
+ assert.equal(quiz.calls.length,0);
+ quiz.click('Confirm');await tick();
+ assert.equal(quiz.calls[0].answer.selected_index,0);
+ assert(quiz.texts().includes('0 correct'));
+});
+test("reload restores a finished result and does not start a new attempt",async()=>{
+ const storage=memoryStorage();
+ let quiz=fixture({localStorage:storage,wrongAt:1});await tick();
+ quiz.click('A');quiz.confirm();await tick();
+ assert(quiz.texts().includes('0 correct'));
+ quiz=fixture({localStorage:storage,wrongAt:1});await tick();
+ assert(quiz.texts().includes('0 correct'));
+ assert(!quiz.texts().includes('Confirm'));
+ assert.equal(quiz.calls.length,0);
+ const next=fixture({localStorage:storage,quizDate:'2026-10-15'});await tick();
+ assert(next.texts().includes('Question 1'));
+});
+test("reload resumes progress and preserves used jokers",async()=>{
+ const storage=memoryStorage();
+ let quiz=fixture({localStorage:storage,correctIndex:2,wrongAt:0});await tick();
+ quiz.click('50/50');quiz.click('50/50');quiz.click('C');quiz.confirm();await tick();
+ quiz=fixture({localStorage:storage,correctIndex:2,wrongAt:0});await tick();
+ assert(quiz.texts().includes('Question 2'));
+ assert.throws(()=>quiz.click('50/50'),/Disabled button/);
+});
 
 test("chat distributions satisfy every range, cap and total", () => {
  const window={};vm.runInNewContext(fs.readFileSync('public/scripts/chat-joker.js','utf8'),{window});
@@ -93,7 +174,7 @@ test("chat uses two presses and splits answers with persistent percentages", asy
  const values=choices.children.map(node=>parseInt(node.children[1].textContent));
  assert.equal(values.reduce((sum,value)=>sum+value,0),100);
  assert.throws(()=>quiz.click('chat'),/Disabled button/);
- quiz.click('A');quiz.click('Confirm');await tick();
+ quiz.click('A');quiz.confirm();await tick();
  assert(quiz.texts().includes('Jokers left: 2'));
 });
 
@@ -119,7 +200,7 @@ test("Copy Result copies text without opening native sharing", async () => {
   share:async()=>assert.fail('Copy must not open sharing'),
   clipboard:{writeText:async value=>{copied=value;}}
  }});
- await tick();quiz.click('A');quiz.click('Confirm');await tick();
+ await tick();quiz.click('A');quiz.confirm();await tick();
  const actions=quiz.root.children.find(node=>node.className==='result-actions');
  assert.deepEqual(actions.children.map(node=>node.textContent),['Share','Copy Result']);
  quiz.click('Copy Result');await tick();
@@ -131,7 +212,7 @@ test("share copies the actual result in the requested format", async () => {
  let copied;
  const quiz=fixture({wrongAt:10,navigator:{clipboard:{writeText:async value=>{copied=value;}}}});
  await tick();
- for(let index=0;index<10;index++){quiz.click('A');quiz.click('Confirm');await tick();}
+ for(let index=0;index<10;index++){quiz.click('A');quiz.confirm();await tick();}
  quiz.click('Share');await tick();
  assert.equal(copied,"🧢Quizzler Daily\n🏆 Level 9/13: 💻 Wikipedia Editor\n🃏 Jokers left: 3\nThink you can beat me?\nhttps://quizzler.cc/daily");
  assert(quiz.texts().includes('Copied!'));
@@ -140,7 +221,7 @@ test("share copies the actual result in the requested format", async () => {
 test("native share includes actual remaining jokers", async () => {
  let shared;
  const quiz=fixture({wrongAt:1,navigator:{share:async value=>{shared=value.text;}}});
- await tick();quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ await tick();quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.confirm();await tick();
  quiz.click('Share');await tick();
  assert(shared.includes('🏆 Level 0/13: 🧱 Brick'));
  assert(shared.includes('🃏 Jokers left: 1'));
@@ -171,7 +252,7 @@ test("telephone displays a single-use hint and hides it on the next question", a
  assert(!quiz.speech.hidden);
  assert(quiz.speech.textContent.length>0);
  assert.throws(()=>quiz.click('phone'),/Disabled button/);
- quiz.click('C');quiz.click('Confirm');await tick();
+ quiz.click('C');quiz.confirm();await tick();
  assert(quiz.speech.hidden);
  assert.throws(()=>quiz.click('phone'),/Disabled button/);
 });
@@ -185,7 +266,7 @@ test("50/50 disables two answers, clears eliminated selection and is used once",
  assert.throws(()=>quiz.click('50/50'),/Disabled button/);
  const choices=quiz.root.children.find(node=>node.className==='answer-choices');
  assert.equal(choices.children.filter(node=>node.className?.includes('eliminated-answer')).length,2);
- quiz.click('C'); quiz.click('Confirm'); await tick();
+ quiz.click('C'); quiz.confirm(); await tick();
  assert.throws(()=>quiz.click('50/50'),/Disabled button/);
  quiz.click('A');
 });
@@ -195,7 +276,7 @@ test("first wrong answer ends the quiz with one collapsed review accordion", asy
  for(let index=1;index<=9;index++) {
   assert(quiz.texts().includes('Question '+index));
   assert(!quiz.texts().some(text=>text.includes('/13')));
-  quiz.click('A'); quiz.click('Confirm'); await tick();
+  quiz.click('A'); quiz.confirm(); await tick();
  }
  assert.equal(quiz.calls.length,9);
  assert(quiz.texts().includes('8 correct'));
@@ -220,7 +301,7 @@ test("first wrong answer ends the quiz with one collapsed review accordion", asy
 
 test("all thirteen correct answers finish the quiz without showing a total",async()=>{
  const quiz=fixture({wrongAt:0,correctIndex:2}); await tick();
- for(let index=0;index<13;index++){quiz.click('C');quiz.click('Confirm');await tick();}
+ for(let index=0;index<13;index++){quiz.click('C');quiz.confirm();await tick();}
  assert.equal(quiz.calls.length,13); assert(quiz.texts().includes('13 correct'));
  assert(quiz.texts().includes('Level reached: 🌌 Galaxy Brain'));
  assert(quiz.calls.every(call=>call.quiz_date==='2026-10-14'));
@@ -233,10 +314,10 @@ test("selection requires confirmation and retry does not resubmit completed answ
  quiz.click('A');quiz.click('C');
  assert.equal(quiz.calls.length,0);
  assert(quiz.texts().includes('Question 1'));
- quiz.click('Confirm');await tick();
+ quiz.confirm();await tick();
  assert.equal(quiz.calls[0].answer.selected_index,2);
  assert.equal(quiz.calls.length,1);
- quiz.click('C');quiz.click('Confirm');await tick();quiz.click('Retry');await tick();
+ quiz.click('C');quiz.confirm();await tick();quiz.click('Retry');await tick();
  assert.equal(quiz.calls.filter(call=>call.question_id===1).length,1);
  assert.equal(quiz.calls.filter(call=>call.question_id===2).length,2);
  assert(quiz.texts().includes('Question 3'));
@@ -251,7 +332,7 @@ test("incomplete daily quiz is unavailable without revealing the total",async()=
 test("first question targets level one and first failure earns level zero", async () => {
  const quiz=fixture({wrongAt:1});await tick();
  assert(quiz.texts().includes('🦠 Single Brain Cell'));
- quiz.click('A');quiz.click('Confirm');await tick();
+ quiz.click('A');quiz.confirm();await tick();
  assert(quiz.texts().includes('Level reached: 🧱 Brick'));
  assert(quiz.texts().includes('0 correct'));
  assert(quiz.texts().includes('Jokers left: 3'));
@@ -259,6 +340,6 @@ test("first question targets level one and first failure earns level zero", asyn
 
 test("results count used 50/50 and phone jokers", async () => {
  const quiz=fixture({wrongAt:1});await tick();
- quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.click('Confirm');await tick();
+ quiz.click('50/50');quiz.click('50/50');quiz.click('phone');quiz.click('phone');quiz.click('D');quiz.confirm();await tick();
  assert(quiz.texts().includes('Jokers left: 1'));
 });

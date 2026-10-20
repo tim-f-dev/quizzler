@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-20",
+  "fields": [
+    "question_en",
+    "question_de",
+    "options_en",
+    "options_de",
+    "correct_index",
+    "category",
+    "difficulty"
+  ],
+  "questions": [
+    [
+      "In which city would you find the Eiffel Tower?",
+      "In welcher Stadt steht der Eiffelturm?",
+      [
+        "Rome",
+        "Paris",
+        "London",
+        "Sydney"
+      ],
+      [
+        "Rom",
+        "Paris",
+        "London",
+        "Sydney"
+      ],
+      1,
+      "geography",
+      1
+    ],
+    [
+      "Which big cat is famous for the mane that adult males usually grow?",
+      "Welche Großkatze ist für die Mähne bekannt, die erwachsene Männchen normalerweise tragen?",
+      [
+        "Tiger",
+        "Leopard",
+        "Penguin",
+        "Lion"
+      ],
+      [
+        "Tiger",
+        "Leopard",
+        "Pinguin",
+        "Löwe"
+      ],
+      3,
+      "animals",
+      1
+    ],
+    [
+      "Which film series features Hogwarts, a school for witches and wizards?",
+      "In welcher Filmreihe kommt Hogwarts vor, eine Schule für Hexerei und Zauberei?",
+      [
+        "Harry Potter",
+        "The Lord of the Rings",
+        "Star Wars",
+        "Jurassic Park"
+      ],
+      [
+        "Harry Potter",
+        "Der Herr der Ringe",
+        "Star Wars",
+        "Jurassic Park"
+      ],
+      0,
+      "film",
+      1
+    ],
+    [
+      "On which surface is the Wimbledon tennis tournament traditionally played?",
+      "Auf welchem Belag wird das Tennisturnier von Wimbledon traditionell gespielt?",
+      [
+        "Clay",
+        "A hard court",
+        "Grass",
+        "Ice"
+      ],
+      [
+        "Sand",
+        "Hartplatz",
+        "Rasen",
+        "Eis"
+      ],
+      2,
+      "sport",
+      1
+    ],
+    [
+      "Which herb gives traditional green pesto alla genovese its characteristic flavour?",
+      "Welches Kraut gibt traditionellem grünem Pesto alla genovese seinen typischen Geschmack?",
+      [
+        "Parsley",
+        "Basil",
+        "Coriander",
+        "Lavender"
+      ],
+      [
+        "Petersilie",
+        "Basilikum",
+        "Koriander",
+        "Lavendel"
+      ],
+      1,
+      "food",
+      2
+    ],
+    [
+      "You stir a spoonful of sugar into water until it dissolves. You then let all the water evaporate gently, without burning the sugar. What remains?",
+      "Du rührst einen Löffel Zucker in Wasser, bis er sich auflöst. Dann lässt du das gesamte Wasser schonend verdunsten, ohne den Zucker zu verbrennen. Was bleibt zurück?",
+      [
+        "The sugar",
+        "Nothing",
+        "Only water",
+        "Table salt"
+      ],
+      [
+        "Der Zucker",
+        "Nichts",
+        "Nur Wasser",
+        "Kochsalz"
+      ],
+      0,
+      "science",
+      3
+    ],
+    [
+      "Which instrument makes its sound when hammers strike strings inside it?",
+      "Bei welchem Instrument entsteht der Klang dadurch, dass Hämmer im Inneren Saiten anschlagen?",
+      [
+        "Harpsichord",
+        "Violin",
+        "Trumpet",
+        "Piano"
+      ],
+      [
+        "Cembalo",
+        "Geige",
+        "Trompete",
+        "Klavier"
+      ],
+      3,
+      "music",
+      4
+    ],
+    [
+      "Which Japanese city was the imperial capital before Tokyo and is known for its historic temples?",
+      "Welche japanische Stadt war vor Tokio die kaiserliche Hauptstadt und ist für ihre historischen Tempel bekannt?",
+      [
+        "Kyoto",
+        "Osaka",
+        "Hiroshima",
+        "Bangkok"
+      ],
+      [
+        "Kyoto",
+        "Osaka",
+        "Hiroshima",
+        "Bangkok"
+      ],
+      0,
+      "history_geography",
+      5
+    ],
+    [
+      "Who wrote Animal Farm, the political fable in which farm animals overthrow their human owner?",
+      "Wer schrieb Farm der Tiere, die politische Fabel, in der Bauernhoftiere ihren menschlichen Besitzer stürzen?",
+      [
+        "Aldous Huxley",
+        "Ernest Hemingway",
+        "George Orwell",
+        "Agatha Christie"
+      ],
+      [
+        "Aldous Huxley",
+        "Ernest Hemingway",
+        "George Orwell",
+        "Agatha Christie"
+      ],
+      2,
+      "literature",
+      6
+    ],
+    [
+      "Which artist painted the melting clocks in The Persistence of Memory?",
+      "Welcher Künstler malte die schmelzenden Uhren in Die Beständigkeit der Erinnerung?",
+      [
+        "René Magritte",
+        "Salvador Dalí",
+        "Pablo Picasso",
+        "Claude Monet"
+      ],
+      [
+        "René Magritte",
+        "Salvador Dalí",
+        "Pablo Picasso",
+        "Claude Monet"
+      ],
+      1,
+      "art",
+      7
+    ],
+    [
+      "The Rosetta Stone helped scholars decipher which ancient writing system?",
+      "Bei der Entzifferung welcher antiken Schrift half der Stein von Rosette?",
+      [
+        "Mesopotamian cuneiform",
+        "Norse runes",
+        "Maya glyphs",
+        "Egyptian hieroglyphs"
+      ],
+      [
+        "Mesopotamische Keilschrift",
+        "Nordische Runen",
+        "Maya-Schrift",
+        "Ägyptische Hieroglyphen"
+      ],
+      3,
+      "history",
+      8
+    ],
+    [
+      "In Greek mythology, who gave Theseus a thread to help him find his way out of the Minotaur's labyrinth?",
+      "Wer gab Theseus in der griechischen Mythologie einen Faden, damit er aus dem Labyrinth des Minotauros herausfinden konnte?",
+      [
+        "Ariadne",
+        "Athena",
+        "Medusa",
+        "Cleopatra"
+      ],
+      [
+        "Ariadne",
+        "Athene",
+        "Medusa",
+        "Kleopatra"
+      ],
+      0,
+      "mythology",
+      9
+    ],
+    [
+      "Which moon of Saturn has a thick atmosphere and surface lakes of liquid methane?",
+      "Welcher Saturnmond hat eine dichte Atmosphäre und Seen aus flüssigem Methan auf seiner Oberfläche?",
+      [
+        "Europa",
+        "Triton",
+        "Titan",
+        "The Moon"
+      ],
+      [
+        "Europa",
+        "Triton",
+        "Titan",
+        "Der Erdmond"
+      ],
+      2,
+      "space",
+      10
+    ]
+  ],
+  "sources": [
+    "https://www.wimbledon.com/en_GB/about/grass_courts",
+    "https://www.moma.org/collection/works/79018",
+    "https://www.britishmuseum.org/learn/schools/ages-7-11/ancient-egypt/examine-rosetta-stone",
+    "https://science.nasa.gov/mission/cassini/science/titan/"
+  ]
+}

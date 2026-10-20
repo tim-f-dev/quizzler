@@ -1,5 +1,6 @@
 (() => {
   const start = document.getElementById("trivia-start");
+  const intro = document.getElementById("trivia-intro");
   const categories = document.getElementById("trivia-categories");
   const status = document.getElementById("trivia-status");
   const question = document.getElementById("trivia-question");
@@ -22,14 +23,18 @@
   let language = document.documentElement.lang === "de" ? "de" : "en";
   let labels = {};
   let busy = false;
+  const categoryIcons = Array.from(document.querySelectorAll(".trivia-category-preview svg"));
   const text = (key, fallback) => labels["trivia." + key] || fallback;
   function renderCategories() {
     categories.replaceChildren();
-    choices.forEach(([category, key, color]) => {
+    choices.forEach(([category, key, color], index) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = text(key, category);
-      button.style.background = "var(--color-" + color + ")";
+      if (categoryIcons[index]) button.append(categoryIcons[index].cloneNode(true));
+      const label = document.createElement("span");
+      label.textContent = text(key, category);
+      button.append(label);
+      button.style.color = "var(--color-" + color + ")";
       button.disabled = busy;
       button.addEventListener("click", () => load(key));
       categories.append(button);
@@ -99,6 +104,9 @@
   });
   start.addEventListener("click", () => {
     start.hidden = true;
+    intro.hidden = true;
+    title.removeAttribute("data-i18n");
+    title.textContent = "Trivial Pursuit";
     categories.hidden = false;
     renderCategories();
   });

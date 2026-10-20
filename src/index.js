@@ -103,6 +103,21 @@ export default {
           );
         }
 
+        let quizDate = date;
+        if (date === today) {
+          const latest = await env.DB.prepare(`
+            SELECT d.quiz_date
+            FROM daily_questions d
+            JOIN questions q ON q.id = d.question_id
+            WHERE d.quiz_date <= ?
+            GROUP BY d.quiz_date
+            HAVING COUNT(*) = 13
+            ORDER BY d.quiz_date DESC
+            LIMIT 1
+          `).bind(today).first();
+          if (latest) quizDate = latest.quiz_date;
+        }
+
         const { results } = await env.DB
           .prepare(`
             SELECT q.id, q.type, q.question_en, q.question_de,
@@ -112,13 +127,13 @@ export default {
             WHERE d.quiz_date = ?
             ORDER BY d.position
           `)
-          .bind(date)
+          .bind(quizDate)
           .all();
 
         return Response.json({
-          date,
+          date: quizDate,
           questions: results.map(q => ({ ...q, data: JSON.parse(q.data), answer: JSON.parse(q.answer) }))
-        });
+        }, { headers: { "Cache-Control": "no-store" } });
       } catch (error) {
         console.error("Daily quiz error:", error);
         return Response.json(

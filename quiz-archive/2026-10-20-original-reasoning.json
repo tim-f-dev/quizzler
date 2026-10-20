@@ -1,0 +1,261 @@
+{
+  "date": "2026-10-20",
+  "fields": [
+    "question_en",
+    "question_de",
+    "options_en",
+    "options_de",
+    "correct_index",
+    "category",
+    "difficulty"
+  ],
+  "questions": [
+    [
+      "A pizza is cut into 8 equal slices. You eat 2. What fraction of the pizza is left?",
+      "Eine Pizza wird in 8 gleich große Stücke geschnitten. Du isst 2. Welcher Anteil bleibt übrig?",
+      [
+        "One quarter",
+        "One half",
+        "Three quarters",
+        "The whole pizza"
+      ],
+      [
+        "Ein Viertel",
+        "Die Hälfte",
+        "Drei Viertel",
+        "Die ganze Pizza"
+      ],
+      2,
+      "everyday_math",
+      1
+    ],
+    [
+      "You face north, then turn a quarter-turn to your right. Which way are you facing?",
+      "Du schaust nach Norden und drehst dich um eine Vierteldrehung nach rechts. Wohin schaust du jetzt?",
+      [
+        "East",
+        "South",
+        "West",
+        "North"
+      ],
+      [
+        "Nach Osten",
+        "Nach Süden",
+        "Nach Westen",
+        "Nach Norden"
+      ],
+      0,
+      "spatial_reasoning",
+      1
+    ],
+    [
+      "A toy car needs 2 batteries. You have 6 batteries. How many toy cars can you power at the same time?",
+      "Ein Spielzeugauto braucht 2 Batterien. Du hast 6 Batterien. Wie viele Autos kannst du gleichzeitig betreiben?",
+      [
+        "2",
+        "4",
+        "6",
+        "3"
+      ],
+      [
+        "2",
+        "4",
+        "6",
+        "3"
+      ],
+      3,
+      "everyday_math",
+      1
+    ],
+    [
+      "Mia is taller than Ben. Ben is taller than Leo. Who is the shortest?",
+      "Mia ist größer als Ben. Ben ist größer als Leo. Wer ist am kleinsten?",
+      [
+        "Mia",
+        "Leo",
+        "Ben",
+        "All three are the same height"
+      ],
+      [
+        "Mia",
+        "Leo",
+        "Ben",
+        "Alle drei sind gleich groß"
+      ],
+      1,
+      "logic",
+      1
+    ],
+    [
+      "A sealed bag contains only 3 red and 2 blue marbles. Without looking, how many must you take to guarantee that at least one is red?",
+      "In einem verschlossenen Beutel sind nur 3 rote und 2 blaue Murmeln. Wie viele musst du blind herausnehmen, damit sicher mindestens eine rote dabei ist?",
+      [
+        "1",
+        "2",
+        "3",
+        "5"
+      ],
+      [
+        "1",
+        "2",
+        "3",
+        "5"
+      ],
+      2,
+      "logic",
+      2
+    ],
+    [
+      "You stir a spoonful of sugar into water until it dissolves. You then let all the water evaporate gently, without burning the sugar. What remains?",
+      "Du rührst einen Löffel Zucker in Wasser, bis er sich auflöst. Dann lässt du das gesamte Wasser schonend verdunsten, ohne den Zucker zu verbrennen. Was bleibt zurück?",
+      [
+        "The sugar",
+        "Nothing",
+        "Only water",
+        "Table salt"
+      ],
+      [
+        "Der Zucker",
+        "Nichts",
+        "Nur Wasser",
+        "Kochsalz"
+      ],
+      0,
+      "science",
+      3
+    ],
+    [
+      "A square garden is 4 metres wide. A second square garden has sides twice as long. How many times as large is its area?",
+      "Ein quadratischer Garten ist 4 Meter breit. Ein zweiter quadratischer Garten hat doppelt so lange Seiten. Wie vielmal so groß ist seine Fläche?",
+      [
+        "2 times",
+        "3 times",
+        "8 times",
+        "4 times"
+      ],
+      [
+        "2-mal",
+        "3-mal",
+        "8-mal",
+        "4-mal"
+      ],
+      3,
+      "geometry",
+      4
+    ],
+    [
+      "A jacket costs 100 euros. Its price rises by 20%, then the new price is reduced by 20%. What is the final price?",
+      "Eine Jacke kostet 100 Euro. Ihr Preis steigt um 20 %. Danach wird der neue Preis um 20 % gesenkt. Was kostet sie am Ende?",
+      [
+        "100 euros",
+        "96 euros",
+        "80 euros",
+        "104 euros"
+      ],
+      [
+        "100 Euro",
+        "96 Euro",
+        "80 Euro",
+        "104 Euro"
+      ],
+      1,
+      "percentages",
+      5
+    ],
+    [
+      "You know that a robot beeps whenever it sees a circle on a card. You hear it beep for a hidden card. Based on this information alone, what can you conclude?",
+      "Du weißt, dass ein Roboter immer piept, wenn er einen Kreis auf einer Karte sieht. Bei einer verdeckten Karte hörst du ihn piepen. Was kannst du allein aus diesen Angaben schließen?",
+      [
+        "The card has a circle",
+        "The card has no circle",
+        "You cannot tell whether it has a circle",
+        "Every card makes it beep"
+      ],
+      [
+        "Die Karte zeigt einen Kreis",
+        "Die Karte zeigt keinen Kreis",
+        "Ob sie einen Kreis zeigt, bleibt offen",
+        "Er piept bei jeder Karte"
+      ],
+      2,
+      "deduction",
+      6
+    ],
+    [
+      "Two fair six-sided dice are rolled. Which total is more likely: 6 or 7?",
+      "Zwei faire sechsseitige Würfel werden geworfen. Welche Augensumme ist wahrscheinlicher: 6 oder 7?",
+      [
+        "7",
+        "6",
+        "Both are equally likely",
+        "It depends on the previous roll"
+      ],
+      [
+        "7",
+        "6",
+        "Beide sind gleich wahrscheinlich",
+        "Das hängt vom vorherigen Wurf ab"
+      ],
+      0,
+      "probability",
+      7
+    ],
+    [
+      "You travel 60 km at 30 km/h, then another 60 km at 60 km/h, with no stops. What is your average speed for the whole trip?",
+      "Du fährst 60 km mit 30 km/h und weitere 60 km mit 60 km/h, ohne Pause. Wie hoch ist deine Durchschnittsgeschwindigkeit für die gesamte Fahrt?",
+      [
+        "45 km/h",
+        "50 km/h",
+        "30 km/h",
+        "40 km/h"
+      ],
+      [
+        "45 km/h",
+        "50 km/h",
+        "30 km/h",
+        "40 km/h"
+      ],
+      3,
+      "rates",
+      8
+    ],
+    [
+      "Three boxes are labelled APPLES, ORANGES, and MIXED. One holds only apples, one only oranges, and one both. Every label is wrong. You take one fruit from the box labelled MIXED and get an apple. What is in the box labelled ORANGES?",
+      "Drei Kisten tragen die Schilder ÄPFEL, ORANGEN und GEMISCHT. Eine enthält nur Äpfel, eine nur Orangen und eine beides. Alle Schilder sind falsch. Aus der Kiste mit dem Schild GEMISCHT ziehst du einen Apfel. Was enthält die Kiste mit dem Schild ORANGEN?",
+      [
+        "Only apples",
+        "Apples and oranges",
+        "Only oranges",
+        "It cannot be determined"
+      ],
+      [
+        "Nur Äpfel",
+        "Äpfel und Orangen",
+        "Nur Orangen",
+        "Das lässt sich nicht bestimmen"
+      ],
+      1,
+      "deduction",
+      9
+    ],
+    [
+      "You have 8 identical-looking coins. Exactly one is lighter; the other 7 weigh the same. Using a balance scale with two pans, what is the fewest weighings that guarantees finding the lighter coin?",
+      "Du hast 8 gleich aussehende Münzen. Genau eine ist leichter; die anderen 7 wiegen gleich viel. Wie viele Wägungen mit einer Balkenwaage mit zwei Waagschalen brauchst du mindestens, um die leichtere Münze garantiert zu finden?",
+      [
+        "1",
+        "3",
+        "2",
+        "4"
+      ],
+      [
+        "1",
+        "3",
+        "2",
+        "4"
+      ],
+      2,
+      "strategy",
+      10
+    ]
+  ]
+}

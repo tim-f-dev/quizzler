@@ -13,13 +13,13 @@ class Element {
   replaceChildren() { this.children = []; }
 }
 function fixture(statusCode = 200) {
-  const ids = Object.fromEntries(["trivia-start","trivia-categories","trivia-status","trivia-question","trivia-question-text","trivia-title","trivia-card-scene","trivia-card","trivia-card-back","trivia-answer","trivia-continue"].map(key=>[key,new Element()]));
+  const ids = Object.fromEntries(["trivia-intro","trivia-start","trivia-categories","trivia-status","trivia-question","trivia-question-text","trivia-title","trivia-card-scene","trivia-card","trivia-card-back","trivia-answer","trivia-continue"].map(key=>[key,new Element()]));
   ids["trivia-categories"].hidden=true;
   ids["trivia-card-scene"].hidden=true;
   let requested;
   const listeners={};
   vm.runInNewContext(fs.readFileSync("public/scripts/trivial-pursuit.js","utf8"), {
-    document:{documentElement:{lang:"de"},getElementById:id=>ids[id],createElement:()=>new Element(),addEventListener:(name,fn)=>{listeners[name]=fn;}},
+    document:{documentElement:{lang:"de"},querySelectorAll:()=>[],getElementById:id=>ids[id],createElement:()=>new Element(),addEventListener:(name,fn)=>{listeners[name]=fn;}},
     URLSearchParams, console,
     fetch:async url=>{requested=new URL(url,"https://quizzler.cc");return {ok:statusCode===200,status:statusCode,json:async()=>({question:"Beispielfrage?",answer:"Hidden answer"})};},
   });
@@ -30,10 +30,11 @@ test("start shows six colored categories and category fetch shows only the quest
  const {ids,request}=fixture();
  assert(ids["trivia-categories"].hidden);
  ids["trivia-start"].click();
+ assert(ids["trivia-intro"].hidden);
  assert(ids["trivia-start"].hidden);assert(!ids["trivia-categories"].hidden);
  const buttons=ids["trivia-categories"].children;
  assert.equal(buttons.length,6);
- assert.deepEqual(buttons.map(button=>button.style.background),["blue","red","gold","purple","green","teal"].map(color=>"var(--color-"+color+")"));
+ assert.deepEqual(buttons.map(button=>button.style.color),["blue","red","gold","purple","green","teal"].map(color=>"var(--color-"+color+")"));
  buttons[3].click();await new Promise(setImmediate);
  assert.equal(request().pathname,"/api/trivia/random");
  assert.equal(request().searchParams.get("language"),"de");

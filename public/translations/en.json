@@ -29,7 +29,7 @@
   "privacy.cloudflareLink": "Cloudflare privacy policy",
   "privacy.cloudflareDpa": "Cloudflare data processing addendum",
   "privacy.storageTitle": "Language preference and browser storage",
-  "privacy.storageText": "The site saves your selected language (en or de) in your browser's local storage under quizzler-language, including the default English selection on first use. This keeps the language consistent across pages and later visits. The preference is read by this website's script and is not sent to the operator as part of a separate tracking request. It remains until you clear the website's browser data or change the selection. The purpose is to provide your preferred interface language; the legal basis for any associated personal-data processing is Article 6(1)(f) GDPR.",
+  "privacy.storageText": "The site saves your selected language (en or de) in your browser's local storage under quizzler-language, including the default English selection on first use. This keeps the language consistent across pages and later visits. The preference is read by this website's script and is not sent to the operator as part of a separate tracking request. It remains until you clear the website's browser data or change the selection. The purpose is to provide your preferred interface language; the legal basis for any associated personal-data processing is Article 6(1)(f) GDPR. The daily quiz also stores an attempt for each quiz date in local storage under quizzler-daily-attempt:<date>. This includes a random player identifier, selected answers, results, progress and used jokers so that reloading restores the same attempt. This data remains on your device until you clear the website data; submitted answers and the player identifier are sent to the website API for storage.",
   "privacy.trackingText": "The current website code contains no analytics, advertising trackers, account registration or contact forms and does not set application cookies. Cloudflare may use cookies or similar technologies for security depending on the services enabled.",
   "privacy.emailTitle": "Contact by email",
   "privacy.emailText": "If you email me, your address, message and any details you provide are processed to respond to your enquiry. Please only send information needed for your request. The legal basis is Article 6(1)(f) GDPR, based on the interest in answering enquiries; Article 6(1)(b) GDPR applies where an enquiry concerns a contract. Messages are deleted when the enquiry is resolved and the data is no longer needed, unless a legal retention obligation or the defence of legal claims requires further storage. Email service providers may process the correspondence as part of delivering and storing email.",
@@ -79,5 +79,15 @@
   "trivia.empty": "No question is available for this category.",
   "trivia.error": "Could not load a question. Choose a category to retry.",
   "trivia.reveal": "Click to reveal the answer",
-  "trivia.continue": "Continue"
+  "trivia.continue": "Continue",
+  "trivia.landingTitle": "Play new Trivial Pursuit questions online for free",
+  "trivia.landingDescription": "Your board is still in great shape, but the questions are outdated? Play fresh quiz questions in six categories on your phone, without buying new cards.",
+  "trivia.landingCategories": "Six categories, new challenges",
+  "trivia.landingScience": "Science",
+  "trivia.startQuestions": "Start quiz questions now",
+  "trivia.noSignup": "No sign-up · German & English",
+  "other.resetDaily": "Reset daily quiz",
+  "other.resetting": "Resetting daily quiz...",
+  "other.resetError": "Could not reset the quiz. Please try again and allow browser storage.",
+  "daily.secondChance": "Are you certain? Or do you want to change your answer?"
 }

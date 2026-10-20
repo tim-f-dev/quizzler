@@ -1,6 +1,6 @@
 (() => {
   const container = document.getElementById("daily-quiz");
-  const userId = "player_" + crypto.randomUUID();
+  let userId = "player_" + crypto.randomUUID();
   const fallback = {
     "daily.loading": "Loading daily quiz...",
     "daily.unavailable": "The daily quiz is not available yet.",
@@ -8,6 +8,7 @@
     "daily.submitError": "Could not submit your answer. Please retry.",
     "daily.retry": "Retry",
     "daily.confirm": "Confirm",
+    "daily.secondChance": "Are you certain? Or do you want to change your answer?",
     "daily.jokers": "Jokers",
     "daily.telephone": "phone",
     "daily.chat": "chat",
@@ -38,6 +39,9 @@
   let state = "loading";
   let fiftyUsed = false;
   let telephoneUsed = false;
+  let secondChanceUsed = false;
+  let secondChanceOpen = false;
+  const correctWarningChecked = [];
   let chatUsed = false;
   const chatPercentages = [];
   let selectedJoker = null;
@@ -62,6 +66,46 @@
   ];
 
   const text = key => labels["daily." + key] || fallback["daily." + key];
+  const levelName = index => labels["daily.level." + index] || levels[index];
+  const attemptKey = () => "quizzler-daily-attempt:" + quizDate;
+  function saveAttempt() {
+    if (!quizDate || !["quiz", "results", "submitting", "submitError"].includes(state)) return;
+    try {
+      localStorage.setItem(attemptKey(), JSON.stringify({
+        version: 1, ids: questions.map(q => q.id), userId, position, answers, results,
+        state: state === "submitting" ? "submitError" : state,
+        fiftyUsed, telephoneUsed, chatUsed, eliminated, chatPercentages,
+        telephoneHint, telephonePosition, secondChanceUsed, secondChanceOpen, correctWarningChecked,
+      }));
+    } catch { /* Storage may be disabled by the browser. */ }
+  }
+  function restoreAttempt() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(attemptKey()));
+      if (!saved || saved.version !== 1 ||
+          JSON.stringify(saved.ids) !== JSON.stringify(questions.map(q => q.id)) ||
+          !["quiz", "results", "submitError"].includes(saved.state) ||
+          !Number.isInteger(saved.position) || saved.position < 0 || saved.position >= questions.length ||
+          !Array.isArray(saved.answers) || !Array.isArray(saved.results) ||
+          !Array.isArray(saved.eliminated) || !Array.isArray(saved.chatPercentages) ||
+          typeof saved.userId !== "string") return;
+      userId = saved.userId;
+      position = saved.position;
+      answers.push(...saved.answers);
+      results.push(...saved.results);
+      eliminated.push(...saved.eliminated);
+      chatPercentages.push(...saved.chatPercentages);
+      fiftyUsed = Boolean(saved.fiftyUsed);
+      telephoneUsed = Boolean(saved.telephoneUsed);
+      secondChanceUsed = Boolean(saved.secondChanceUsed);
+      secondChanceOpen = Boolean(saved.secondChanceOpen);
+      if (Array.isArray(saved.correctWarningChecked)) correctWarningChecked.push(...saved.correctWarningChecked);
+      chatUsed = Boolean(saved.chatUsed);
+      telephoneHint = saved.telephoneHint;
+      telephonePosition = saved.telephonePosition;
+      state = saved.state;
+    } catch { /* Ignore absent or invalid saved attempts. */ }
+  }
   function element(tag, content, parent = container) {
     const node = document.createElement(tag);
     if (content !== undefined) node.textContent = content;
@@ -82,12 +126,13 @@
   }
 
   function render() {
+    saveAttempt();
     container.dataset.state = state;
     const speech = document.getElementById("telephone-speech");
     if (speech) {
-      speech.hidden = state !== "quiz" || !telephoneHint || telephonePosition !== position;
+      speech.hidden = state !== "quiz" || (!secondChanceOpen && (!telephoneHint || telephonePosition !== position));
       if (!speech.hidden) {
-        speech.textContent = window.TelephoneJoker.format(telephoneHint, questions[position], language);
+        speech.textContent = secondChanceOpen ? text("secondChance") : window.TelephoneJoker.format(telephoneHint, questions[position], language);
       }
     }
     container.replaceChildren();
@@ -103,12 +148,12 @@
     if (state === "results") {
       const score = results.filter(result => result.is_correct).length;
       element("h2", score + " " + text("correct"));
-      element("p", text("levelReached") + ": " + levels[score]);
+      element("p", text("levelReached") + ": " + levelName(score));
       const jokersLeft = 3 - Number(fiftyUsed) - Number(telephoneUsed) - Number(chatUsed);
       element("p", text("jokersLeft") + ": " + jokersLeft);
       const shareText = [
         "🧢Quizzler Daily",
-        "🏆 Level " + score + "/13: " + levels[score],
+        "🏆 Level " + score + "/13: " + levelName(score),
         "🃏 Jokers left: " + jokersLeft,
         "Think you can beat me?",
         "https://quizzler.cc/daily",
@@ -173,7 +218,7 @@
 
     const question = questions[position];
     element("p", text("question") + " " + (position + 1));
-    element("h2", levels[position + 1]);
+    element("h2", levelName(position + 1));
     element("h2", questionText(question));
     const choices = element("div");
     choices.className = "answer-choices";
@@ -181,6 +226,7 @@
       const choice = button(option, () => {
         if (eliminated[position]?.includes(index)) return;
         answers[position] = index;
+        secondChanceOpen = false;
         render();
       }, choices);
       choice.setAttribute("aria-pressed", String(answers[position] === index));
@@ -298,10 +344,14 @@
         fiftyUsed = false;
         selectedJoker = null;
         telephoneUsed = false;
+        secondChanceUsed = false;
+        secondChanceOpen = false;
+        correctWarningChecked.length = 0;
         chatUsed = false;
         chatPercentages.length = 0;
         telephoneHint = undefined;
         state = "quiz";
+        restoreAttempt();
       }
     } catch (error) {
       console.error("Daily quiz load failed:", error);
@@ -312,6 +362,23 @@
 
   async function submitCurrent() {
     if (state === "submitting" || !Number.isInteger(answers[position])) return;
+    if (!secondChanceOpen) {
+      const isCorrect = answers[position] === questions[position].answer.correct_index;
+      let warn = false;
+      if (!isCorrect && !secondChanceUsed) {
+        secondChanceUsed = true;
+        warn = true;
+      } else if (isCorrect && !correctWarningChecked[position]) {
+        correctWarningChecked[position] = true;
+        warn = Math.random() < 0.08;
+      }
+      if (warn) {
+        secondChanceOpen = true;
+        render();
+        return;
+      }
+    }
+    secondChanceOpen = false;
     selectedJoker = null;
     state = "submitting";
     render();

@@ -1,43 +1,49 @@
-# quizzler
+# Quizzler
 
-Static site assets live in `public/`. The Worker entry point is
-`src/index.js`, configured in `wrangler.json`.
+# 🧢 [Play at quizzler.cc](https://quizzler.cc)
 
-Pages use `/en/` and `/de/` prefixes (for example `/en/trivia/` and
-`/de/trivia/`). The Worker serves the shared HTML with the requested language;
-old page URLs redirect to English. The language button navigates to the same
-page in the other language. Static assets and API endpoints remain at their
-existing root paths. Admin access remains restricted on both language routes.
+A website for trivia, with a daily quiz and fresh questions for Trivial Pursuit. Available in **German and English**, with no registration needed to play.
 
-Trivial Pursuit lives at `/<language>/trivia/trivial-pursuit/` and uses the
-`TRIVIA_DB` D1 binding. `GET /api/trivia/random?language=en&category=geography`
-selects one random question using the requested `en`/`de` language and one of
-the category keys: `geography`, `entertainment`, `history`, `arts`, `science`,
-or `sports`. The database must have a `questions` table containing
-`id`, `question`, `language`, `category`, `difficulty`, and `answer`.
+## Daily Quizzler
 
-Run locally with `npx wrangler dev`.
-Deploy with `npx wrangler deploy`.
+A daily quiz with **13 multiple-choice questions** and three single-use jokers. Answers are confirmed individually, and the first incorrect answer ends the attempt.
 
-To add a page, copy `templates/page.html` to `public/<page-name>/index.html`
-and edit its title and main content. The shared stylesheet and layout script
-provide the background, centered content, home logo and footer controls.
-Keep `layout.js` before `language.js` so the language button is ready.
-For translated page text, add matching keys to both translation JSON files
-and use `data-i18n` on the corresponding elements.
+Results show the number of correct answers, the level reached, and the remaining jokers. Questions and answers can be reviewed afterward, and results can be copied or shared.
 
-Admin is available at `/admin/` (no home-menu link). `ADMIN_IP` in
-`wrangler.json` allows only the configured public address via Cloudflare's
-`CF-Connecting-IP` header. Update it if your public IP changes. IPv4 and IPv6
-are supported, with one address allowed at a time. Do not deploy these static
-assets separately on Pages: the Worker must run first to protect admin HTML.
+Progress is saved in the browser, so reloading resumes the attempt or restores its result. If no quiz exists for today, the latest complete quiz is used.
 
-Admin APIs: `GET /api/admin/days`, `GET /api/admin/day?date=YYYY-MM-DD`,
-`POST /api/admin/day?date=YYYY-MM-DD` to create, and `PUT` at the same URL to
-edit. Writes require same-origin JSON and the `X-Quizzler-Admin: 1` header.
-Each save contains exactly 13 bilingual multiple-choice questions. Saves use
-a D1 transaction and a unique index on `(quiz_date, position)`. Editing creates
-new question rows for that date; historical answer rows retain their original
-question references. The existing tables must support auto-generated integer
-question IDs and the columns used by the public quiz APIs. No remote schema
-changes or production data writes are performed during local tests.
+## Trivial Pursuit Questions
+
+Questions for Trivial Pursuit that can be used to play new questions on old board games.
+
+Random questions in six categories: Geography, Entertainment, History, Arts & Literature, Science & Nature, and Sports & Leisure.
+
+Selecting a category loads a question in the current language. Clicking the card flips it to reveal the answer; Continue returns to the category selection. This mode has no scorekeeping.
+
+## Around the site
+
+The homepage leads to **Daily**, **Trivia**, **About**, and **Other**. About and Other are still placeholders for future additions. Legal Notice and Privacy Policy have their own pages.
+
+English pages live under `/en/`, German pages under `/de/`. The language switch takes you to the same page in the other language. The mascot in the top-left corner takes you home.
+
+There's also an **admin page** for managing daily quizzes: choose an existing day, edit its 13 questions and answers in both languages, or create a new day. It isn't linked from the homepage, and both the page and its APIs are restricted to the owner's configured IP address.
+
+## What's in this repository?
+
+| Folder | Contents |
+| --- | --- |
+| `public/` | Pages, game scripts, shared styles, translations, images, fonts, and icons. |
+| `src/` | Cloudflare Worker APIs, language routing, and admin access controls. |
+| `templates/` | A starter page using the shared layout. |
+| `tests/` | Automated tests, sample-data preview, and screenshots. |
+| `quiz-archive/` | Saved quiz material and notes. |
+
+The daily quiz and Trivial Pursuit use separate Cloudflare D1 databases. `wrangler.json` connects those databases to the Worker and holds the hosting settings. `public/_redirects` keeps a few older page links working.
+
+## Working on it locally
+
+Run **`npx wrangler dev`** to work with the Cloudflare setup, or **`node tests/preview.cjs`** for a simple browser preview with sample questions and no production database writes.
+
+To add a page, start with `templates/page.html` and put it in a new folder under `public/`. It already includes the shared styling, mascot home link, footer, and language switch. Add interface text to both translation files when it needs to be bilingual.
+
+Deploy with **`npx wrangler deploy`**. Keep the Worker in front of the static files: it handles the language URLs and protects the admin area. The allowed admin IP is configured in `wrangler.json` and needs updating if that address changes.
