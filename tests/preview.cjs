@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const root = path.resolve('public');
+const root = path.resolve('dist/browser');
 const samples = [
  ['What is the capital of Australia?', ['Sydney','Melbourne','Canberra','Perth']],
  ['Which composer became deaf later in life?', ['Wolfgang Amadeus Mozart','Johann Sebastian Bach','Ludwig van Beethoven','Franz Joseph Haydn']],
@@ -14,6 +14,12 @@ const adminDays = new Map([["2026-10-14", Array.from({length:13},(_,i)=>({
 }))]]);
 http.createServer(async (req,res)=>{
  const url = new URL(req.url,'http://localhost');
+ const page = url.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '');
+ if (['', '/daily', '/trivia', '/trivia/trivial-pursuit', '/about', '/other', '/admin', '/legal-notice', '/privacy-policy'].includes(page)) {
+  res.writeHead(302, { Location: '/en' + page + '/' + url.search });
+  res.end();
+  return;
+ }
  url.pathname = url.pathname.replace(/^\/(en|de)(?=\/|$)/, '') || '/';
  if(url.pathname === '/api/trivia/random') {
   res.setHeader('Content-Type','application/json');

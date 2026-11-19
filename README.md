@@ -2,7 +2,7 @@
 
 # 🧢 [Play at quizzler.cc](https://quizzler.cc)
 
-A website for trivia, with a daily quiz and fresh questions for Trivial Pursuit. Available in **German and English**, with no registration needed to play.
+Quizzler is a **trivia website built with Angular**. Play the daily quiz or get fresh questions for Trivial Pursuit in **German or English**, with no registration needed.
 
 ## Daily Quizzler
 
@@ -32,9 +32,9 @@ There's also an **admin page** for managing daily quizzes: choose an existing da
 
 | Folder | Contents |
 | --- | --- |
-| `public/` | Pages, game scripts, shared styles, translations, images, fonts, and icons. |
+| `public/` | HTML entry points, shared styles, translations, images, fonts, and icons. |
 | `src/` | Cloudflare Worker APIs, language routing, and admin access controls. |
-| `templates/` | A starter page using the shared layout. |
+| `frontend/` | Angular page templates, layout, language service, and game controllers. |
 | `tests/` | Automated tests, sample-data preview, and screenshots. |
 | `quiz-archive/` | Saved quiz material and notes. |
 
@@ -42,8 +42,8 @@ The daily quiz and Trivial Pursuit use separate Cloudflare D1 databases. `wrangl
 
 ## Working on it locally
 
-Run **`npx wrangler dev`** to work with the Cloudflare setup, or **`node tests/preview.cjs`** for a simple browser preview with sample questions and no production database writes.
+Run **`npm install`** first. Use **`npm run dev`** for the Cloudflare Worker and its local databases or **`npm run preview`** for sample data with no production database writes. Use **`npm test`** for the automated tests.
 
-To add a page, start with `templates/page.html` and put it in a new folder under `public/`. It already includes the shared styling, mascot home link, footer, and language switch. Add interface text to both translation files when it needs to be bilingual.
+To add a page, create its component and template under `frontend/`, register it in the app component, and add an HTML entry point under `public/` with the matching `data-view`. Add bilingual labels to both files under `public/translations/`. The Worker serves the entry points and the Angular bundle from `dist/browser/`.
 
-Deploy with **`npx wrangler deploy`**. Keep the Worker in front of the static files: it handles the language URLs and protects the admin area. The allowed admin IP is configured in `wrangler.json` and needs updating if that address changes.
+Deploy with **`npm run deploy`**. Keep the Worker in front of the static files: it handles the language URLs and protects the admin area. The allowed admin IP is configured in `wrangler.json` and needs updating if that address changes.

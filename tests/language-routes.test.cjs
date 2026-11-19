@@ -1,7 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
-const vm = require("node:vm");
 const dataURL = source => "data:text/javascript;base64," + Buffer.from(source).toString("base64");
 const worker = import(dataURL(fs.readFileSync("src/index.js", "utf8")
   .replace('"./admin.js"', JSON.stringify(dataURL(fs.readFileSync("src/admin.js", "utf8"))))
@@ -27,32 +26,12 @@ test("language-prefixed pages resolve to shared assets and old URLs redirect", a
   }
 });
 
-test("explicit URL language wins over saved preference and switching keeps page/query", async () => {
-  const labels = JSON.parse(fs.readFileSync("public/translations/de.json", "utf8"));
-  const button = { addEventListener(name, callback) { this[name] = callback; } };
-  const document = {
-    currentScript: { src: "https://quizzler.cc/scripts/language.js" },
-    getElementById: () => button,
-    querySelectorAll: () => [],
-    documentElement: {},
-    body: { dataset: { page: "trivia" } },
-    dispatchEvent() {},
-  };
-  let destination;
-  const window = { location: {
-    pathname: "/de/trivia/", href: "https://quizzler.cc/de/trivia/?foo=bar",
-    assign(value) { destination = value; },
-  } };
-  vm.runInNewContext(fs.readFileSync("public/scripts/language.js", "utf8"), {
-    document, window, URL, CustomEvent: class {},
-    localStorage: { getItem: () => "en", setItem() {} },
-    fetch: async url => { assert(url.pathname.endsWith("/de.json")); return { ok: true, json: async () => labels }; },
-    console,
-  });
-  await new Promise(setImmediate);
-  assert.equal(document.documentElement.lang, "de");
-  button.click();
-  assert.equal(destination, "https://quizzler.cc/en/trivia/?foo=bar");
+test("the language switch keeps the page, query, and fragment", async () => {
+  const { languageFromPath, switchLanguageUrl } = await import("../frontend/language-url.js");
+  assert.equal(languageFromPath("/de/trivia/"), "de");
+  assert.equal(languageFromPath("/en/"), "en");
+  assert.equal(switchLanguageUrl("https://quizzler.cc/de/trivia/?foo=bar#cards"), "https://quizzler.cc/en/trivia/?foo=bar#cards");
+  assert.equal(switchLanguageUrl("https://quizzler.cc/en/"), "https://quizzler.cc/de/");
 });
 
 test("random trivia API binds the requested category and language", async () => {

@@ -7,7 +7,7 @@ function fixture(failure = false) {
   const status = {};
   const removed = [];
   let destination;
-  vm.runInNewContext(fs.readFileSync("public/scripts/other.js", "utf8"), {
+  vm.runInNewContext(fs.readFileSync("frontend/controllers/other.js", "utf8").replace("export function mount", "function mount") + "\nmount();", {
     document: { getElementById: id => id === "reset-daily" ? button : status, addEventListener() {} },
     window: { location: { pathname: "/de/other/", assign: value => { destination = value; } } },
     localStorage: { removeItem: key => removed.push(key) },

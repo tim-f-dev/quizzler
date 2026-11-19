@@ -17,8 +17,8 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
   const root = new Element("div");
   const speech = new Element("p");
   const window = { location: {} };
-  vm.runInNewContext(fs.readFileSync("public/scripts/telephone-joker.js", "utf8"), { window });
-  vm.runInNewContext(fs.readFileSync("public/scripts/chat-joker.js", "utf8"), { window });
+  vm.runInNewContext(fs.readFileSync("frontend/controllers/telephone-joker.js", "utf8"), { window });
+  vm.runInNewContext(fs.readFileSync("frontend/controllers/chat-joker.js", "utf8"), { window });
   const listeners = {};
   const calls = [];
   let failed = false;
@@ -28,7 +28,7 @@ function fixture({ failAt, count = 13, wrongAt = 9, correctIndex = 0, navigator 
     answer: {correct_index: index + 1 === wrongAt ? 2 : correctIndex},
     data: { options_en: ["A", "B", "C", "D"], options_de: ["AA", "BB", "CC", "DD"] },
   }));
-  vm.runInNewContext(fs.readFileSync("public/scripts/daily.js", "utf8"), {
+  vm.runInNewContext(fs.readFileSync("frontend/controllers/daily.js", "utf8").replace("export function mount", "function mount") + "\nmount();", {
     document: {
       getElementById: id => id === "telephone-speech" ? speech : root, createElement: tag => new Element(tag),
       createElementNS: (namespace, tag) => new Element(tag),
@@ -151,7 +151,7 @@ test("reload resumes progress and preserves used jokers",async()=>{
 });
 
 test("chat distributions satisfy every range, cap and total", () => {
- const window={};vm.runInNewContext(fs.readFileSync('public/scripts/chat-joker.js','utf8'),{window});
+ const window={};vm.runInNewContext(fs.readFileSync('frontend/controllers/chat-joker.js','utf8'),{window});
  for(let number=1;number<=13;number++) for(let correct=0;correct<4;correct++) {
   for(let trial=0;trial<100;trial++) {
    const values=window.ChatJoker.percentages(number,correct);
@@ -229,7 +229,7 @@ test("native share includes actual remaining jokers", async () => {
 
 test("telephone response weights, correct and wrong hints, bilingual formatting", () => {
  const window = {};
- vm.runInNewContext(fs.readFileSync("public/scripts/telephone-joker.js", "utf8"), { window });
+ vm.runInNewContext(fs.readFileSync("frontend/controllers/telephone-joker.js", "utf8"), { window });
  const joker=window.TelephoneJoker;
  assert.equal(joker.responses[0].weight,0.5);
  assert.equal(joker.responses[1].weight,0.5);

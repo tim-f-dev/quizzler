@@ -6,19 +6,9 @@
   <title>Quizzler</title>
   <link rel="icon" type="image/png" href="/files/photos/quizzler_bluecap.png">
   <link rel="stylesheet" href="/styles/main.css">
-  <script src="/scripts/layout.js" defer></script>
-  <script src="/scripts/language.js" defer></script>
 </head>
 <body data-home-page>
-  <main>
-    <h1 class="home-title" aria-label="QUIZZLER"><span aria-hidden="true">Q</span><span aria-hidden="true">U</span><span aria-hidden="true">I</span><span aria-hidden="true">Z</span><span aria-hidden="true">Z</span><span aria-hidden="true">L</span><span aria-hidden="true">E</span><span aria-hidden="true">R</span></h1>
-    <img class="home-logo" src="/files/photos/quizzler_bluecap.png" alt="Quizzler">
-    <nav aria-label="Main navigation" data-i18n-aria-label="mainNavigation">
-      <a href="daily/" data-i18n="daily">Daily</a>
-      <a href="trivia/" data-i18n="trivia">Trivia</a>
-      <a href="about/" data-i18n="about">About</a>
-      <a href="other/" data-i18n="other">Other</a>
-    </nav>
-  </main>
+  <quizzler-app data-view="home"></quizzler-app>
+  <script type="module" src="/main.js"></script>
 </body>
 </html>

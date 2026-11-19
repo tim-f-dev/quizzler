@@ -1,0 +1,29 @@
+@if (view !== 'home') {
+  <header class="site-header">
+    <a [href]="link('/')" [attr.aria-label]="text('home')">
+      <img src="/files/photos/quizzler_bluecap.png" alt="Quizzler">
+    </a>
+    <p id="telephone-speech" class="telephone-speech" role="status" hidden></p>
+  </header>
+}
+
+@switch (view) {
+  @case ('about') { <quizzler-about /> }
+  @case ('admin') { <quizzler-admin /> }
+  @case ('daily') { <quizzler-daily /> }
+  @case ('legal-notice') { <quizzler-legal-notice /> }
+  @case ('other') { <quizzler-other /> }
+  @case ('privacy-policy') { <quizzler-privacy-policy /> }
+  @case ('trivia') { <quizzler-trivia /> }
+  @case ('trivial-pursuit') { <quizzler-trivial-pursuit /> }
+  @default { <quizzler-home /> }
+}
+
+<footer class="site-footer" [attr.aria-label]="text('footerOptions')">
+  <a [href]="link('/legal-notice/')">{{ text('legal-notice') }}</a>
+  <a [href]="link('/privacy-policy/')">{{ text('privacy-policy') }}</a>
+  <button type="button" id="language-switcher" (click)="switchLanguage()"
+          [attr.aria-label]="text('switchLanguage')">
+    {{ language === 'en' ? 'Deutsch / English V' : 'Deutsch V / English' }}
+  </button>
+</footer>

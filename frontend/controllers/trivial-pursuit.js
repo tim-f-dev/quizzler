@@ -1,4 +1,4 @@
-(() => {
+export function mount(initialLabels = {}) {
   const start = document.getElementById("trivia-start");
   const intro = document.getElementById("trivia-intro");
   const categories = document.getElementById("trivia-categories");
@@ -21,7 +21,7 @@
     ["Sports & Leisure", "sports", "teal"],
   ];
   let language = document.documentElement.lang === "de" ? "de" : "en";
-  let labels = {};
+  let labels = initialLabels;
   let busy = false;
   const categoryIcons = Array.from(document.querySelectorAll(".trivia-category-preview svg"));
   const text = (key, fallback) => labels["trivia." + key] || fallback;
@@ -105,7 +105,6 @@
   start.addEventListener("click", () => {
     start.hidden = true;
     intro.hidden = true;
-    title.removeAttribute("data-i18n");
     title.textContent = "Trivial Pursuit";
     categories.hidden = false;
     renderCategories();
@@ -116,4 +115,4 @@
     if (!scene.hidden && selectedCategory) title.textContent = text(selectedCategory[1], selectedCategory[0]);
     renderCategories();
   });
-})();
+}

@@ -12,16 +12,9 @@
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="/files/photos/quizzler_bluecap.png">
   <link rel="stylesheet" href="/styles/main.css">
-  <script src="/scripts/layout.js" defer></script>
-  <script src="/scripts/language.js" defer></script>
 </head>
 <body data-page="daily" data-title="&quot;Quizzler Daily&quot; - Daily trivia game">
-  <main>
-    <h1 class="daily-title" aria-label="Daily Quizzler"><span aria-hidden="true">D</span><span aria-hidden="true">a</span><span aria-hidden="true">i</span><span aria-hidden="true">l</span><span aria-hidden="true">y</span> <span aria-hidden="true">Q</span><span aria-hidden="true">u</span><span aria-hidden="true">i</span><span aria-hidden="true">z</span><span aria-hidden="true">z</span><span aria-hidden="true">l</span><span aria-hidden="true">e</span><span aria-hidden="true">r</span></h1>
-    <div id="daily-quiz" aria-live="polite">Loading daily quiz...</div>
-  </main>
-  <script src="/scripts/telephone-joker.js" defer></script>
-  <script src="/scripts/chat-joker.js" defer></script>
-  <script src="/scripts/daily.js" defer></script>
+  <quizzler-app data-view="daily"></quizzler-app>
+  <script type="module" src="/main.js"></script>
 </body>
 </html>

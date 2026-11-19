@@ -19,7 +19,7 @@
     }
   ],
   "assets": {
-    "directory": "./public",
+    "directory": "./dist/browser",
     "binding": "ASSETS",
     "run_worker_first": true
   }

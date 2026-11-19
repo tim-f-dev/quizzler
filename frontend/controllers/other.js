@@ -1,7 +1,7 @@
-(() => {
+export function mount(initialLabels = {}) {
   const button = document.getElementById("reset-daily");
   const status = document.getElementById("reset-daily-status");
-  let labels = {};
+  let labels = initialLabels;
   const text = (key, fallback) => labels[key] || fallback;
   document.addEventListener("languagechange", event => { labels = event.detail.labels; });
   button.addEventListener("click", async () => {
@@ -24,4 +24,4 @@
       button.disabled = false;
     }
   });
-})();
+}

@@ -18,7 +18,7 @@ function fixture(statusCode = 200) {
   ids["trivia-card-scene"].hidden=true;
   let requested;
   const listeners={};
-  vm.runInNewContext(fs.readFileSync("public/scripts/trivial-pursuit.js","utf8"), {
+  vm.runInNewContext(fs.readFileSync("frontend/controllers/trivial-pursuit.js","utf8").replace("export function mount", "function mount") + "\nmount();", {
     document:{documentElement:{lang:"de"},querySelectorAll:()=>[],getElementById:id=>ids[id],createElement:()=>new Element(),addEventListener:(name,fn)=>{listeners[name]=fn;}},
     URLSearchParams, console,
     fetch:async url=>{requested=new URL(url,"https://quizzler.cc");return {ok:statusCode===200,status:statusCode,json:async()=>({question:"Beispielfrage?",answer:"Hidden answer"})};},

@@ -1,6 +1,6 @@
 				import worker, * as OTHER_EXPORTS from "D:\\!programmierung\\quizzler\\quizzler\\src\\index.js";
-				import * as __MIDDLEWARE_0__ from "C:\\Users\\timde\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\templates\\middleware\\middleware-ensure-req-body-drained.ts";
-import * as __MIDDLEWARE_1__ from "C:\\Users\\timde\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\templates\\middleware\\middleware-miniflare3-json-error.ts";
+				import * as __MIDDLEWARE_0__ from "D:\\!programmierung\\quizzler\\quizzler\\node_modules\\wrangler\\templates\\middleware\\middleware-ensure-req-body-drained.ts";
+import * as __MIDDLEWARE_1__ from "D:\\!programmierung\\quizzler\\quizzler\\node_modules\\wrangler\\templates\\middleware\\middleware-miniflare3-json-error.ts";
 
 				export * from "D:\\!programmierung\\quizzler\\quizzler\\src\\index.js";
 				const MIDDLEWARE_TEST_INJECT = "__INJECT_FOR_TESTING_WRANGLER_MIDDLEWARE__";

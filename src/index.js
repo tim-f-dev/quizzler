@@ -13,7 +13,11 @@ export default {
         url.pathname = "/" + language + "/";
         return Response.redirect(url.toString(), 302);
       }
-      const pagePath = localized[2] || "/";
+      const pagePath = localized[2];
+      if (/^\/quiz(?:\/|\/index\.html)?$/.test(pagePath)) {
+        url.pathname = "/" + language + "/trivia/";
+        return Response.redirect(url.toString(), 302);
+      }
       const assetURL = new URL(request.url);
       assetURL.pathname = pagePath;
       const assetRequest = new Request(assetURL, request);

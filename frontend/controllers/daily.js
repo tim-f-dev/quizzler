@@ -1,4 +1,4 @@
-(() => {
+export function mount(initialLabels = {}) {
   const container = document.getElementById("daily-quiz");
   let userId = "player_" + crypto.randomUUID();
   const fallback = {
@@ -29,7 +29,7 @@
     "daily.correctAnswer": "Correct answer",
     "daily.yourAnswer": "Your answer",
   };
-  let labels = fallback;
+  let labels = { ...fallback, ...initialLabels };
   let language = document.documentElement.lang === "de" ? "de" : "en";
   let questions = [];
   let quizDate;
@@ -425,4 +425,4 @@
     document.fonts?.ready.then(fitAnswerText);
   }
   load();
-})();
+}

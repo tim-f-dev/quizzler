@@ -1,4 +1,4 @@
-(() => {
+export function mount() {
   const days = document.getElementById("days");
   const form = document.getElementById("editor");
   const fields = document.getElementById("questions");
@@ -148,4 +148,4 @@
     if (dirty) { event.preventDefault(); event.returnValue = ""; }
   });
   refresh().catch(error => { status.textContent = error.message; });
-})();
+}
